@@ -1,0 +1,73 @@
+{% extends "app/base.html" %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<!-- {% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+<a href="{{ signup_url }}">sign up</a>
+
+
+<div class="socialaccount_ballot">
+
+  <ul class="socialaccount_providers">
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+  </ul>
+
+  <div class="login-or">{% trans 'or' %}</div>
+
+</div>
+
+{% include "socialaccount/snippets/login_extra.html" %}
+
+{% else %}
+<p>{% blocktrans %}If you have not created an account yet, then please
+<a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+{% endif %} -->
+
+<div class="card card-profile my-5 mx-auto">
+  <div class="card-body">
+    <h5 class="card-title text-center">ログイン</h5>
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <table class="profile_table mb-4">
+        <tbody>
+          <tr>
+          <th class="header">メールアドレス</th>
+            <td class="data">
+                {{ form.login | add_class:'form-control' }}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">パスワード</th>
+            <td class="data">
+                {{ form.password | add_class:'form-control' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      {% for error in form.non_field_errors %}
+      <ul class="error-message-card">
+        <li class="error-message">{{ error }}</li>
+      </ul>
+      {% endfor %}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <p>ログイン状態を保持する &nbsp;{{ form.remember }}</p>
+      <a href="{{ signup_url }}">新規登録はこちら</a><br>
+      <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      <div class="button mx-auto">
+        <button class="btn btn-lg btn-warning btn-block" type="submit">{% trans "Sign In" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
