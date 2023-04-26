@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load widget_tweaks %}
 {% load account socialaccount %}
+{% load static %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
@@ -69,5 +70,9 @@
     </form>
   </div>
 </div>
+
+<a href="{% provider_login_url 'google' %}" class="google-login-btn">
+  <span class="google-icon"></span> Sign in with Google
+</a>
 
 {% endblock %}
