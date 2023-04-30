@@ -143,9 +143,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+# 静的ファイルを配信するためのURLを定義
 STATIC_URL = '/static/'
-#STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# プロジェクトの静的ファイルを探す場所を定義
+STATICFILES_DIRS = [BASE_DIR / 'static']
+# 開発中に静的ファイルをサーブするための設定
+DEBUG_PROPAGATE_EXCEPTIONS = True
+# if DEBUG:
+#     STATICFILES_DIRS += [os.path.join(BASE_DIR, "staticfiles")]
+#     STATICFILES_DIRS += [os.path.join(BASE_DIR, "..", "static")]
+#     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# 本番環境では、以下指定してwebサーバに静的ファイルを配置する
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # media設定
 MEDIA_URL = '/media/'
