@@ -1,0 +1,25 @@
+{% extends "app/base.html" %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+
+<div class="card card-profile my-5 mx-auto">
+  <div class="card-body">
+    <h5 class="card-title text-center">ログアウトしますか？</h5>
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+      {% endif %}
+      <div class="button mx-auto">
+        <button class="btn btn-lg btn-warning btn-block" type="submit">ログアウトする</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

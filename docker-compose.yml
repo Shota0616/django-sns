@@ -43,7 +43,7 @@ services:
     volumes:
       - ./web/uwsgi.ini:/etc/uwsgi/uwsgi.ini
       - ./back:/opt/app
-      - ./web/static:/opt/app/static
+      - ./web/static:/var/www/html/static
       - ./back/media/images:/opt/app/media/images
     expose:
       - "8001"
