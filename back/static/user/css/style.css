@@ -91,7 +91,11 @@
   width: 100%;
 }
 
-.google-login-btn {
+.google-login-btn:hover  {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* .google-login-btn {
   display: inline-block;
   background-color: #4285f4;
   border-radius: 4px;
@@ -106,12 +110,4 @@
 }
 .google-login-btn:hover {
   background-color: #3367d6;
-}
-.google-icon {
-  display: inline-block;
-  background-image: url('https://developers.google.com/identity/images/g-logo.png');
-  background-size: cover;
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-}
+} */

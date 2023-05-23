@@ -67,12 +67,14 @@
       <div class="button mx-auto">
         <button class="btn btn-lg btn-warning btn-block" type="submit">{% trans "Sign In" %}</button>
       </div>
+      <div class="google-login-wrap mx-auto">
+        <a href="{% provider_login_url 'google' %}" class="google-login-btn">
+          <img src="{% static 'user/images/btn_google_signin_light_normal_web.png' %}" alt="">
+        </a>
+      </div>
     </form>
   </div>
 </div>
 
-<a href="{% provider_login_url 'google' %}" class="google-login-btn">
-  <span class="google-icon"></span> Sign in with Google
-</a>
 
 {% endblock %}
