@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import password_validation
 from django.contrib.auth.password_validation import validate_password
 
-from allauth.account.forms import SignupForm, LoginForm, ResetPasswordForm, ResetPasswordKeyForm, PasswordField
+from allauth.account.forms import SignupForm
 
 from .models import MyUser
 
@@ -34,25 +35,31 @@ class ProfileForm(forms.Form):
     #     model   = MyUser
     #     fields  = ("first_name","last_name","email","profile_image")
 
-class MyCustomSignupForm(SignupForm, UserCreationForm):
-    
-    first_name = forms.CharField(max_length=30, label='姓',
-        widget=forms.TextInput(
-        attrs={'placeholder':'姓', 'class':'form-control'}))
-    last_name = forms.CharField(max_length=30, label='名',
-        widget=forms.TextInput(
-        attrs={'placeholder':'名', 'class':'form-control'}))
+class MyCustomSignupForm(forms.ModelForm):
+
     email = forms.EmailField(max_length=255,
         widget=forms.TextInput(
         attrs={'type':'email', 'name':'login', "autocomplete":"email", 'placeholder':'メールアドレス', 'class':'form-control'}))
-    profile_image = forms.ImageField(required=False)
     password1 = forms.CharField(max_length=128,)
     password2 = forms.CharField(max_length=128,)
+    userid = forms.CharField(max_length=30, label='ユーザーID',
+        widget=forms.TextInput(
+        attrs={'placeholder':'ユーザーID', 'class':'form-control'}))
+    nickname = forms.CharField(max_length=30, label='名前',
+        widget=forms.TextInput(
+        attrs={'placeholder':'名前', 'class':'form-control'}))
+    introduction = forms.CharField(max_length=1000, label='自己紹介',
+        widget=forms.Textarea(
+        attrs={'placeholder':'自己紹介', 'class':'form-control'}))
+    profile_image = forms.ImageField(required=False)
+
+
 
     class Meta:
         model = MyUser
-        fields = ['first_name', 'last_name', 'email', 'profile_image',]
+        fields = ('email', 'userid', 'nickname', 'password1', 'password2', 'introduction', 'profile_image')
 
+    # バリデーション
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email:
@@ -66,9 +73,23 @@ class MyCustomSignupForm(SignupForm, UserCreationForm):
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("パスワードが一致しません。")
-        validate_password(password2, self.instance)
+        password_validation.validate_password(password2)
         return password2
-    
+
+    def clean_username_id(self):
+        username_id = self.cleaned_data.get('username_id')
+        if MyUser.objects.filter(username_id=username_id).exists():
+            raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
+        return username_id
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
+
     # def save(self, request):
     #     user = super(MyCustomSignupForm, self).save(request)
     #     user.first_name = self.cleaned_data['first_name']

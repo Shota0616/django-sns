@@ -7,7 +7,7 @@ from allauth.account import views
 from allauth.account import forms
 
 from user.models import MyUser
-from user.forms import ProfileForm, MyCustomSignupForm, ResetPasswordForm, ResetPasswordKeyForm
+from user.forms import ProfileForm, MyCustomSignupForm
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -49,7 +49,7 @@ class ProfileEditView(LoginRequiredMixin, View):
 
 # allauthのviewをオーバーライド
 class SignupView(views.SignupView, MyCustomSignupForm):
-    
+
     def signup(request):
         form = MyCustomSignupForm(request.POST or None)
         if form.is_valid():

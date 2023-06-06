@@ -16,30 +16,45 @@
         <tbody>
           <tr>
           <th class="header">名前</th>
-              <td class="data form_wrap form_wrap-2">
-                  {{ form.first_name | add_class:'form-control' }} {{ form.last_name | add_class:'form-control' }}
-              </td>
+            <td class="data form_wrap form_wrap-2">
+              {{ form.nickname | add_class:'form-control' }}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">ユーザーID</th>
+            <td class="data form_wrap form_wrap-2">
+              {{ form.userid | add_class:'form-control' }}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">自己紹介</th>
+            <td class="data">
+              {{ form.introduction | add_class:'form-control' }}
+            </td>
           </tr>
           <tr>
           <th class="header">メールアドレス</th>
-              <td class="data">
-                  {{ form.email | add_class:'form-control' }}
-              </td>
+            <td class="data">
+              {{ form.email | add_class:'form-control' }}
+            </td>
           </tr>
+          <tr>
           <th class="header">プロフィール画像</th>
-              <td class="data">
-                  {{ form.profile_image | add_class:'form-control' }}
-              </td>
+            <td class="data">
+              {{ form.profile_image | add_class:'form-control' }}
+            </td>
           </tr>
+          <tr>
           <th class="header">パスワード</th>
-              <td class="data">
-                  {{ form.password1 | add_class:'form-control' }}
-              </td>
+            <td class="data">
+              {{ form.password1 | add_class:'form-control' }}
+            </td>
           </tr>
+          <tr>
           <th class="header">パスワード確認</th>
-              <td class="data">
-                  {{ form.password2 | add_class:'form-control' }}
-              </td>
+            <td class="data">
+              {{ form.password2 | add_class:'form-control' }}
+            </td>
           </tr>
         </tbody>
       </table>
