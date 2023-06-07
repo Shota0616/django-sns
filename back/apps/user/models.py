@@ -32,7 +32,7 @@ class MyUser(AbstractBaseUser):
     userid = models.CharField(null=False,max_length=30,unique=True)
     nickname = models.CharField(null=False,max_length=30)
     introduction = models.TextField(max_length=1000,blank=True,null=True)
-    profile_image = models.ImageField(upload_to='images', blank=True, null=True)
+    profile_image = models.ImageField(upload_to='images',default='common/default.png' , blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     last_login = models.DateTimeField(blank=True, null=True)

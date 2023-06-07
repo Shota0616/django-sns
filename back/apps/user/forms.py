@@ -22,18 +22,24 @@ class UserForm(forms.ModelForm):
         # フィールド名指定
         labels = {'username':"ユーザー名",'email':"Eメール"}
 
-class ProfileForm(forms.Form):
-    first_name = forms.CharField(max_length=30, label='姓')
-    last_name = forms.CharField(max_length=30, label='名')
+class ProfileEditForm(forms.Form):
+    userid = forms.CharField(max_length=30, label='ユーザーID',
+        widget=forms.TextInput(
+        attrs={'placeholder':'ユーザーID', 'class':'form-control'}))
+    nickname = forms.CharField(max_length=30, label='名前',
+        widget=forms.TextInput(
+        attrs={'placeholder':'名前', 'class':'form-control'}))
+    introduction = forms.CharField(max_length=1000, label='自己紹介',
+        widget=forms.Textarea(
+        attrs={'placeholder':'自己紹介', 'class':'form-control'}))
+    profile_image = forms.ImageField(required=False, initial='common/default.png')
 
+    def clean_userid(self):
+        userid = self.cleaned_data.get('userid')
+        if MyUser.objects.filter(userid=userid).exists():
+            raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
+        return userid
 
-# allauthForm
-# class MyCustomSignupForm(SignupForm):
-#     pass
-
-    # class Meta(UserCreationForm.Meta):
-    #     model   = MyUser
-    #     fields  = ("first_name","last_name","email","profile_image")
 
 class MyCustomSignupForm(forms.ModelForm):
 
@@ -51,8 +57,7 @@ class MyCustomSignupForm(forms.ModelForm):
     introduction = forms.CharField(max_length=1000, label='自己紹介',
         widget=forms.Textarea(
         attrs={'placeholder':'自己紹介', 'class':'form-control'}))
-    profile_image = forms.ImageField(required=False)
-
+    profile_image = forms.ImageField(required=False, initial='common/default.png')
 
 
     class Meta:
@@ -76,11 +81,11 @@ class MyCustomSignupForm(forms.ModelForm):
         password_validation.validate_password(password2)
         return password2
 
-    def clean_username_id(self):
-        username_id = self.cleaned_data.get('username_id')
-        if MyUser.objects.filter(username_id=username_id).exists():
+    def clean_userid(self):
+        userid = self.cleaned_data.get('userid')
+        if MyUser.objects.filter(userid=userid).exists():
             raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
-        return username_id
+        return userid
 
     def save(self, commit=True):
         # Save the provided password in hashed format
@@ -90,13 +95,7 @@ class MyCustomSignupForm(forms.ModelForm):
             user.save()
         return user
 
-    # def save(self, request):
-    #     user = super(MyCustomSignupForm, self).save(request)
-    #     user.first_name = self.cleaned_data['first_name']
-    #     user.last_name = self.cleaned_data['last_name']
-    #     user.profile_image = self.cleaned_data['profile_image']
-    #     user.save()
-    #     return user
+
 
 # class MyLoginForm(LoginForm):
 #     pass
