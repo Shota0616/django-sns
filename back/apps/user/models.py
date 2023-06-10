@@ -29,10 +29,10 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address',max_length=255,unique=True)
     password = models.CharField(max_length=128)
-    userid = models.CharField(null=False,max_length=30,unique=True)
+    userid = models.CharField(null=False,blank=False,max_length=15,unique=True)
     nickname = models.CharField(null=False,max_length=30)
-    introduction = models.TextField(max_length=1000,blank=True,null=True)
-    profile_image = models.ImageField(upload_to='images',default='common/default.png' , blank=True, null=True)
+    introduction = models.TextField(max_length=1000,blank=True,null=False,default="")
+    profile_image = models.ImageField(upload_to='images', default='common/default.png', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     last_login = models.DateTimeField(blank=True, null=True)

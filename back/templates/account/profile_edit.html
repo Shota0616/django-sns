@@ -1,9 +1,9 @@
-{% extends "app/base.html" %} {% load widget_tweaks %} {% block content %}
+{% extends "common/base.html" %} {% load widget_tweaks %} {% block content %}
 
 <div class="card card-profile my-5 mx-auto">
   <div class="card-body">
     <h5 class="card-title text-center">編集画面</h5>
-    <form method="post">
+    <form method="post" novaldate>
       {% csrf_token %}
       <table class="profile_table mb-4">
         <tbody>
@@ -33,6 +33,15 @@
           </tr>
         </tbody>
       </table>
+      {% if form.errors %}
+        {% for field_errors in form.errors.values %}
+          {% for error in field_errors %}
+          <ul class="error-message-card">
+            <li class="error-message">{{ error }}</li>
+          </ul>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
       <div class="button mx-auto">
         <button class="btn btn-lg btn-warning btn-block" type="submit">
           登録する

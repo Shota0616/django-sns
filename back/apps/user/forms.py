@@ -1,10 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import password_validation
-from django.contrib.auth.password_validation import validate_password
-
+from django.contrib.auth import password_validation, get_user
 from allauth.account.forms import SignupForm
+from .utils import generate_unique_id
 
 from .models import MyUser
 
@@ -34,66 +33,148 @@ class ProfileEditForm(forms.Form):
         attrs={'placeholder':'自己紹介', 'class':'form-control'}))
     profile_image = forms.ImageField(required=False, initial='common/default.png')
 
+    def __init__(self, *args, **kwargs):
+        for field in self.base_fields.values():
+            field.widget.attrs["class"] = "form-control"
+        super().__init__(*args, **kwargs)
+
+    # バリデーション
     def clean_userid(self):
         userid = self.cleaned_data.get('userid')
-        if MyUser.objects.filter(userid=userid).exists():
+        user = get_user(self.login_user)
+        if MyUser.objects.exclude(id=user.id).filter(userid=userid).exists():
             raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
         return userid
 
-
-class MyCustomSignupForm(forms.ModelForm):
-
-    email = forms.EmailField(max_length=255,
-        widget=forms.TextInput(
-        attrs={'type':'email', 'name':'login', "autocomplete":"email", 'placeholder':'メールアドレス', 'class':'form-control'}))
-    password1 = forms.CharField(max_length=128,)
-    password2 = forms.CharField(max_length=128,)
-    userid = forms.CharField(max_length=30, label='ユーザーID',
-        widget=forms.TextInput(
-        attrs={'placeholder':'ユーザーID', 'class':'form-control'}))
-    nickname = forms.CharField(max_length=30, label='名前',
-        widget=forms.TextInput(
-        attrs={'placeholder':'名前', 'class':'form-control'}))
-    introduction = forms.CharField(max_length=1000, label='自己紹介',
-        widget=forms.Textarea(
-        attrs={'placeholder':'自己紹介', 'class':'form-control'}))
-    profile_image = forms.ImageField(required=False, initial='common/default.png')
+    def clean_nickname(self):
+        nickname = self.cleaned_data.get('nickname')
+        if len(nickname) >= 30:
+            raise forms.ValidationError('ニックネームは30文字以内で入力してください。')
+        return nickname
 
 
-    class Meta:
-        model = MyUser
-        fields = ('email', 'userid', 'nickname', 'password1', 'password2', 'introduction', 'profile_image')
+class MyCustomSignupForm(SignupForm):
+    email = forms.EmailField(
+        max_length=255,
+        error_messages={'invalid': '有効なメールアドレスを入力してください。'},
+        label='メールアドレス',
+        widget=forms.TextInput(attrs={'type':'email', 'name':'login', "autocomplete":"email", 'placeholder':'メールアドレス', 'class':'form-control'})
+    )
+    password1 = forms.CharField(
+        max_length=128,
+        label='パスワード',
+        widget=forms.PasswordInput(attrs={'placeholder':'パスワード', 'class':'form-control'})
+    )
+    password2 = forms.CharField(
+        max_length=128,
+        label='パスワード確認',
+        widget=forms.PasswordInput(attrs={'placeholder':'パスワード確認', 'class':'form-control'})
+    )
+    userid = forms.CharField(
+        initial=generate_unique_id,
+        max_length=15,
+        label='ユーザーID',
+        widget=forms.TextInput(attrs={'placeholder':'ユーザーID', 'class':'form-control'})
+    )
+    nickname = forms.CharField(
+        max_length=30,
+        label='名前',
+        widget=forms.TextInput(attrs={'placeholder':'名前', 'class':'form-control'})
+    )
+    introduction = forms.CharField(
+        max_length=1000,
+        label='自己紹介',
+        widget=forms.Textarea(attrs={'placeholder':'自己紹介', 'class':'form-control'})
+    )
+    profile_image = forms.ImageField(
+        initial='common/default.png',
+        label='プロフィール画像',
+    )
+
+
+        # class Meta:
+        #     model = MyUser
+        #     fields = ('email', 'userid', 'nickname', 'password1', 'password2', 'introduction', 'profile_image')
+
+    # djangoデフォルトのバリデーションメッセージを表示したくないので、required = False
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = False
 
     # バリデーション
+    def clean_userid(self):
+        userid = self.cleaned_data.get('userid')
+        if MyUser.objects.filter(userid__iexact=userid).exists():
+            raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
+        return userid
+
+    def clean_nickname(self):
+        nickname = self.cleaned_data.get('nickname')
+        if not nickname:
+            raise forms.ValidationError('名前は必須です。')
+        return nickname
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email:
             raise forms.ValidationError("メールアドレスは必須です。")
         if MyUser.objects.filter(email=email).exists():
-            raise forms.ValidationError("こちらのメールアドレスは既に登録済みです。")
+            raise forms.ValidationError("こちらのメールアドレスは既に登録済みです.")
         return email
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        if not password1:
+            raise forms.ValidationError("パスワードは必須です。")
+        password_validation.validate_password(password1)
+        return password1
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        password1 = cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if not password2:
+            raise forms.ValidationError("確認用パスワードも入力してください。")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("パスワードが一致しません。")
-        password_validation.validate_password(password2)
-        return password2
+        # パスワードのdjango側のバリデーションチェック
+        password_validation.validate_password(password1, password2)
 
-    def clean_userid(self):
-        userid = self.cleaned_data.get('userid')
-        if MyUser.objects.filter(userid=userid).exists():
-            raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
-        return userid
+        return cleaned_data
 
-    def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
+    # # バリデーション
+    # def clean_email(self):
+    #     email = self.cleaned_data.get('email')
+    #     if not email:
+    #         raise forms.ValidationError("メールアドレスは必須です。")
+    #     if MyUser.objects.filter(email=email).exists():
+    #         raise forms.ValidationError("こちらのメールアドレスは既に登録済みです。")
+    #     return email
+
+    # def clean_password2(self):
+    #     password1 = self.cleaned_data.get("password1")
+    #     password2 = self.cleaned_data.get("password2")
+    #     if password1 and password2 and password1 != password2:
+    #         raise forms.ValidationError("パスワードが一致しません。")
+    #     password_validation.validate_password(password2)
+    #     return password2
+
+    # def clean_userid(self):
+    #     userid = self.cleaned_data.get('userid')
+    #     if MyUser.objects.filter(userid=userid).exists():
+    #         raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
+    #     return userid
+
+    # def save(self, commit=True):
+    #     # Save the provided password in hashed format
+    #     user = super().save(commit=False)
+    #     user.set_password(self.cleaned_data["password1"])
+    #     if commit:
+    #         user.save()
+    #     return user
 
 
 
