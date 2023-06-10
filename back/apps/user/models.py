@@ -35,7 +35,7 @@ class MyUser(AbstractBaseUser):
     profile_image = models.ImageField(upload_to='images', default='common/default.png', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    last_login = models.DateTimeField(blank=True, null=True)
+    last_login = models.DateTimeField(blank=True, null=True, verbose_name='last login')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -92,6 +92,18 @@ class MyCustomSignupForm(SignupForm):
     )
 
 
+    def save(self, request):
+        user = super().save(request)
+
+        user.userid = self.cleaned_data['userid']
+        user.nickname = self.cleaned_data['nickname']
+        user.introduction = self.cleaned_data['introduction']
+        user.profile_image = self.cleaned_data['profile_image']
+        user.save()
+
+        return user
+
+
         # class Meta:
         #     model = MyUser
         #     fields = ('email', 'userid', 'nickname', 'password1', 'password2', 'introduction', 'profile_image')
@@ -105,6 +117,8 @@ class MyCustomSignupForm(SignupForm):
     # バリデーション
     def clean_userid(self):
         userid = self.cleaned_data.get('userid')
+        if not userid:
+            raise forms.ValidationError("ユーザーIDは必須です。")
         if MyUser.objects.filter(userid__iexact=userid).exists():
             raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
         return userid
@@ -145,36 +159,6 @@ class MyCustomSignupForm(SignupForm):
 
         return cleaned_data
 
-    # # バリデーション
-    # def clean_email(self):
-    #     email = self.cleaned_data.get('email')
-    #     if not email:
-    #         raise forms.ValidationError("メールアドレスは必須です。")
-    #     if MyUser.objects.filter(email=email).exists():
-    #         raise forms.ValidationError("こちらのメールアドレスは既に登録済みです。")
-    #     return email
-
-    # def clean_password2(self):
-    #     password1 = self.cleaned_data.get("password1")
-    #     password2 = self.cleaned_data.get("password2")
-    #     if password1 and password2 and password1 != password2:
-    #         raise forms.ValidationError("パスワードが一致しません。")
-    #     password_validation.validate_password(password2)
-    #     return password2
-
-    # def clean_userid(self):
-    #     userid = self.cleaned_data.get('userid')
-    #     if MyUser.objects.filter(userid=userid).exists():
-    #         raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
-    #     return userid
-
-    # def save(self, commit=True):
-    #     # Save the provided password in hashed format
-    #     user = super().save(commit=False)
-    #     user.set_password(self.cleaned_data["password1"])
-    #     if commit:
-    #         user.save()
-    #     return user
 
 
 

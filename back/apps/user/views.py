@@ -10,12 +10,12 @@ from user.models import MyUser
 from user.forms import ProfileEditForm, MyCustomSignupForm
 
 
-class ProfileView(LoginRequiredMixin, View):
+class ProfileView(View):
     def get(self, request, *args, **kwargs):
-        user_data = MyUser.objects.get(id=request.user.id)
-        return render(request, 'account/profile.html', {
-            'user_data': user_data,
-        })
+        user_data = {
+            'user_data': request.user,
+        }
+        return render(request, 'account/profile.html', user_data)
 
 
 # ユーザー情報編集View
@@ -79,7 +79,11 @@ class ProfileEditView(View):
 class SignupView(views.SignupView, MyCustomSignupForm):
     form_class = MyCustomSignupForm
     template_name = 'account/signup.html'
-    success_url = 'account/profile.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        form.save(self.request)  # save()メソッドを呼び出す
+        return response
 
     # def form_valid(self, form):
     #     self.user = form.save(self.request)
