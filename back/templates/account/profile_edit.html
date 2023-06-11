@@ -3,7 +3,7 @@
 <div class="card card-profile my-5 mx-auto">
   <div class="card-body">
     <h5 class="card-title text-center">編集画面</h5>
-    <form method="post" novaldate>
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <table class="profile_table mb-4">
         <tbody>

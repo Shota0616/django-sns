@@ -2,20 +2,46 @@
 
 <div class="card card-profile my-5 mx-auto">
   <div class="card-body">
-    <h5 class="card-title text-center">編集</h5>
-    <form method="post">
+    <h5 class="card-title text-center">編集画面</h5>
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <table class="profile_table mb-4">
         <tbody>
           <tr>
-            <th class="header">名前</th>
-            <td class="data form_wrap form_wrap-2">
-              {% render_field form.first_name class="form-control" placeholder="姓" %}
-              {% render_field form.last_name class="form-control" placeholder="名" %}
+          <th class="header">名前</th>
+            <td class="data form_wrap">
+              {% render_field form.nickname class="form-control" placeholder="名前" %}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">ユーザーID</th>
+            <td class="data form_wrap">
+              {% render_field form.userid class="form-control" placeholder="ユーザーID" %}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">自己紹介</th>
+            <td class="data form_wrap">
+              {% render_field form.introduction class="form-control" placeholder="自己紹介" %}
+            </td>
+          </tr>
+          <tr>
+          <th class="header">プロフィール画像</th>
+            <td class="data form_wrap">
+              {{ form.profile_image | add_class:'form-control' }}
             </td>
           </tr>
         </tbody>
       </table>
+      {% if form.errors %}
+        {% for field_errors in form.errors.values %}
+          {% for error in field_errors %}
+          <ul class="error-message-card">
+            <li class="error-message">{{ error }}</li>
+          </ul>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
       <div class="button mx-auto">
         <button class="btn btn-lg btn-warning btn-block" type="submit">
           登録する
