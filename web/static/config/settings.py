@@ -150,7 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # カスタムユーザーモデルを使用
-AUTH_USER_MODEL = "user.MyUser"
+AUTH_USER_MODEL = "user.User"
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 

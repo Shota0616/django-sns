@@ -6,7 +6,7 @@ from django.contrib.auth import password_validation, get_user
 from allauth.account.forms import SignupForm
 
 from .utils import generate_unique_id
-from .models import MyUser
+from .models import User
 
 
 # ユーザー編集フォーム
@@ -36,7 +36,7 @@ class ProfileEditForm(forms.Form):
         if not userid:
             raise forms.ValidationError("ユーザーIDは必須です。")
     # 自身のIDと入力されたIDが同一でなく、入力されたIDが既に存在する場合にエラーを出す
-        if self.instance.userid != userid and MyUser.objects.filter(userid__iexact=userid).exists():
+        if self.instance.userid != userid and User.objects.filter(userid__iexact=userid).exists():
             raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
         return userid
 
@@ -105,7 +105,7 @@ class MyCustomSignupForm(SignupForm):
         userid = self.cleaned_data.get('userid')
         if not userid:
             raise forms.ValidationError("ユーザーIDは必須です。")
-        if MyUser.objects.filter(userid__iexact=userid).exists():
+        if User.objects.filter(userid__iexact=userid).exists():
             raise forms.ValidationError('こちらのユーザーIDはすでに使用されています。')
         return userid
 
@@ -119,7 +119,7 @@ class MyCustomSignupForm(SignupForm):
         email = self.cleaned_data.get('email')
         if not email:
             raise forms.ValidationError("メールアドレスは必須です。")
-        if MyUser.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError("こちらのメールアドレスは既に登録済みです.")
         return email
 

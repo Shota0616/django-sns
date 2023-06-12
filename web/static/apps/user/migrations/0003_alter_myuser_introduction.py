@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0002_alter_myuser_userid'),
+        ('user', '0002_alter_User_userid'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='myuser',
+            model_name='User',
             name='introduction',
             field=models.TextField(blank=True, default='', max_length=1000),
         ),

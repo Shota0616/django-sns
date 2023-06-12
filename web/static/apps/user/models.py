@@ -3,7 +3,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 from django.utils import timezone
 
 
-class MyUserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     def create_user(self, email, last_name, first_name, password=None):
         if not email:
             raise ValueError('Users must have an email address')
@@ -26,7 +26,7 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-class MyUser(AbstractBaseUser):
+class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address',max_length=255,unique=True)
     password = models.CharField(max_length=128)
     userid = models.CharField(null=False,blank=False,max_length=15,unique=True)
@@ -39,7 +39,7 @@ class MyUser(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = MyUserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'

@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0003_alter_myuser_introduction'),
+        ('user', '0003_alter_User_introduction'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='myuser',
+            model_name='User',
             name='last_login',
             field=models.DateTimeField(blank=True, null=True, verbose_name='last login'),
         ),

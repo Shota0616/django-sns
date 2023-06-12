@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from allauth.account import views
 from allauth.account import forms
 
-from user.models import MyUser
+from user.models import User
 from user.forms import ProfileEditForm, MyCustomSignupForm
 
 
@@ -22,7 +22,7 @@ class ProfileView(View):
 class ProfileEditView(View):
     # 編集ボタンを押下したときに既存値を取得して表示
     def get(self, request, *args, **kwargs):
-        user_data = MyUser.objects.get(id=request.user.id)
+        user_data = User.objects.get(id=request.user.id)
         form = ProfileEditForm(
             # formにinit情報を設定
             initial={
@@ -35,7 +35,7 @@ class ProfileEditView(View):
 
     def post(self, request, *args, **kwargs):
 
-        user_data = MyUser.objects.get(id=request.user.id)
+        user_data = User.objects.get(id=request.user.id)
         form = ProfileEditForm(request.POST or None, request.FILES or None, instance=user_data)
 
         if form.is_valid():
