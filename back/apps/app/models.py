@@ -6,9 +6,12 @@ from user.models import User
 # Tweetモデル
 class Tweet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.CharField(max_length=300,blank=False,null=False)
+    text = models.CharField(max_length=300,blank=False,null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "app_tweet"
 
 
 # Likeモデル
@@ -19,6 +22,7 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('user', 'tweet')
+        db_table = "app_like"
 
 
 # Commentモデル
@@ -29,6 +33,9 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = "app_comment"
+
 
 # Retweetモデル
 class Retweet(models.Model):
@@ -38,6 +45,7 @@ class Retweet(models.Model):
 
     class Meta:
         unique_together = ('user', 'tweet')
+        db_table = "app_retweet"
 
 
 # Followモデル
@@ -48,3 +56,4 @@ class Follow(models.Model):
 
     class Meta:
         unique_together = ('follower', 'following')
+        db_table = "app_follow"
