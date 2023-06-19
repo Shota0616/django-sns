@@ -1,0 +1,37 @@
+{% extends "common/base.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="card card-profile my-5 mx-auto">
+  <div class="card-body">
+    <h5 class="card-title text-center">ツイート投稿</h5>
+    <form method="post">
+      {% csrf_token %}
+      <table class="profile_table mb-4">
+        <tbody>
+          <tr>
+            <td class="data">
+              {% if field.errors %}
+                {{ form.text|add_class:'form-control error' }}
+                <li class="error-message">{{ field.errors }}</li>
+              {% else %}
+                {{ form.text|add_class:'form-control' }}
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <div class="button mx-auto">
+        <button class="btn btn-lg btn-warning btn-block" type="submit">投稿</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
