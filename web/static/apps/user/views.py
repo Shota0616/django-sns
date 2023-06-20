@@ -7,15 +7,19 @@ from allauth.account import views
 from allauth.account import forms
 
 from user.models import User
+from app.models import Tweet
 from user.forms import ProfileEditForm, MyCustomSignupForm
 
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
-        user_data = {
-            'user_data': request.user,
+        user_data = request.user
+        tweet_data = Tweet.objects.filter(user_id=request.user.id)
+        context = {
+            'user_data': user_data,
+            'tweet_data': tweet_data,
         }
-        return render(request, 'account/profile.html', user_data)
+        return render(request, 'account/profile.html', context)
 
 
 # ユーザー情報編集View

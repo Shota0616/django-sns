@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
+# Userモデル
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address',max_length=255,unique=True)
     password = models.CharField(max_length=128)
@@ -58,3 +58,6 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    class Meta:
+        db_table = "user_user"
