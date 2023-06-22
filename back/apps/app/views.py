@@ -19,7 +19,7 @@ class TweetListView(View):
         tweets = Tweet.objects.all()  # 全てのツイートを取得
         return render(request, 'app/list.html', {'tweets': tweets})
 
-# 新しいTweetを作成
+# Tweetを作成
 class TweetCreateView(View):
     def get(self, request, *args, **kwargs):
         form = TweetForm()
@@ -35,18 +35,18 @@ class TweetCreateView(View):
         else:
             return render(request, 'app/tweet_create.html', {'form': form})
 
-# Tweetの詳細を表示
+# Tweet詳細
 class TweetDetailView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)  # Tweetを取得、存在しない場合は404エラーを表示
-        return render(request, 'app/detail.html', {'tweet': tweet})
+        return render(request, 'app/tweet_detail.html', {'tweet': tweet})
 
-# Tweetを編集
-class TweetUpdateView(View):
+# Tweet編集
+class TweetEditView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
         form = TweetForm(instance=tweet)  # フォームを初期化、初期値はtweet
-        return render(request, 'app/update.html', {'form': form})
+        return render(request, 'app/tweet_edit.html', {'form': form})
 
     def post(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
@@ -55,9 +55,9 @@ class TweetUpdateView(View):
             form.save()
             return redirect('tweets:detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
         else:
-            return render(request, 'app/update.html', {'form': form})
+            return render(request, 'app/tweet_edit.html', {'form': form})
 
-# Tweetを削除
+# Tweet削除
 class TweetDeleteView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)

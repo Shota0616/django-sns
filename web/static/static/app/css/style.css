@@ -9,6 +9,11 @@
 
 .tweet-card {
     border-radius: 0.5rem;
+    text-decoration: none;
+}
+
+.tweet-card:hover {
+    border-color: gray;
 }
 
 .tweets {
