@@ -5,8 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .models import Tweet
-from .forms import TweetForm
-
+from .forms import TweetForm, TweetEditForm
 
 # 初期画面
 class IndexView(TemplateView):
@@ -38,22 +37,33 @@ class TweetCreateView(View):
 # Tweet詳細
 class TweetDetailView(View):
     def get(self, request, pk, *args, **kwargs):
-        tweet = get_object_or_404(Tweet, pk=pk)  # Tweetを取得、存在しない場合は404エラーを表示
-        return render(request, 'app/tweet_detail.html', {'tweet': tweet})
+        tweet = Tweet.objects.all().select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
+        current_user = request.user
+        context = {
+            'tweet': tweet,
+            'current_user': current_user,
+        }
+        return render(request, 'app/tweet_detail.html', context)
 
 # Tweet編集
 class TweetEditView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        form = TweetEditForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
         return render(request, 'app/tweet_edit.html', {'form': form})
 
     def post(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetForm(request.POST, instance=tweet)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
+        form = TweetEditForm(request.POST, instance=tweet)
         if form.is_valid():
             form.save()
-            return redirect('tweets:detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
+            return redirect('tweet_detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
         else:
             return render(request, 'app/tweet_edit.html', {'form': form})
 

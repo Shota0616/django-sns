@@ -1,0 +1,15 @@
+{% extends "common/base.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block content %}
+
+<h2>ツイート編集</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">更新</button>
+</form>
+
+{% endblock %}

@@ -39,7 +39,7 @@
         </ul>
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
-          <li class="nav-item">
+          <li class="nav-item align-content-start">
             <a class="nav-link" href="{% url 'tweet_create' %}">投稿</a>
           </li>
           {% endif %}

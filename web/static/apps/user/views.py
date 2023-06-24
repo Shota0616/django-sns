@@ -13,8 +13,11 @@ from user.forms import ProfileEditForm, MyCustomSignupForm
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
-        user_data = request.user
-        tweet_data = Tweet.objects.filter(user_id=request.user.id)
+        user_data = User.objects.get(id=request.user.id)
+        try:
+            tweet_data = Tweet.objects.filter(user=user_data).all()
+        except User.DoesNotExist:
+            pass
         context = {
             'user_data': user_data,
             'tweet_data': tweet_data,

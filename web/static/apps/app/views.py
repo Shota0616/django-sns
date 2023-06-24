@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Tweet
 from .forms import TweetForm
 
-
 # 初期画面
 class IndexView(TemplateView):
     template_name = "app/index.html"
@@ -38,8 +37,13 @@ class TweetCreateView(View):
 # Tweet詳細
 class TweetDetailView(View):
     def get(self, request, pk, *args, **kwargs):
-        tweet = get_object_or_404(Tweet, pk=pk)  # Tweetを取得、存在しない場合は404エラーを表示
-        return render(request, 'app/tweet_detail.html', {'tweet': tweet})
+        tweet = Tweet.objects.all().select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
+        current_user = request.user
+        context = {
+            'tweet': tweet,
+            'current_user': current_user,
+        }
+        return render(request, 'app/tweet_detail.html', context)
 
 # Tweet編集
 class TweetEditView(View):

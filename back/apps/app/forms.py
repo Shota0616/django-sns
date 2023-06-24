@@ -29,3 +29,23 @@ class TweetForm(forms.ModelForm):
     #     user_data.text = self.cleaned_data['text']
     #     user_data.save()
     #     return user_data
+
+# ユーザー編集フォーム
+class TweetEditForm(forms.ModelForm):
+    text = forms.CharField(max_length=300, widget=forms.TextInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = Tweet
+        fields = ['text']
+
+    # djangoデフォルトのバリデーションメッセージを表示したくないので、required = False
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = False
+
+    def clean_text(self):
+        text = self.cleaned_data.get('text')
+        if text == "":
+            raise forms.ValidationError('入力してください。')
+        return text

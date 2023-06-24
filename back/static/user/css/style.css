@@ -83,10 +83,6 @@
   font-size: 1.5rem;
 }
 
-.card-body {
-  padding: 2rem;
-}
-
 .form-auth {
   width: 100%;
 }
@@ -110,10 +106,6 @@
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-  padding: 1rem;
 }
 
 /* gooleログインボタン */

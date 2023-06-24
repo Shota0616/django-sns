@@ -5,7 +5,7 @@ from user.models import User
 
 # Tweetモデル
 class Tweet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tweet_user')
     text = models.CharField(max_length=300,blank=False,null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,8 +16,8 @@ class Tweet(models.Model):
 
 # Likeモデル
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, related_name='likes', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like_user')
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='like_tweet')
     liked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -27,8 +27,8 @@ class Like(models.Model):
 
 # Commentモデル
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='comments_tweet')
     text = models.CharField(max_length=300,blank=False,null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,8 +39,8 @@ class Comment(models.Model):
 
 # Retweetモデル
 class Retweet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='retweet_user')
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='retweet_tweet')
     retweeted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

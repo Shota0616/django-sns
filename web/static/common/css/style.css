@@ -84,7 +84,8 @@ footer {
   }
   
   .card-body {
-    padding: 2rem;
+    padding: 2rem 1rem 1rem 1rem;
+    position: relative;
   }
   
   .form-auth {
@@ -111,11 +112,7 @@ footer {
     margin-bottom: 1rem;
     box-shadow: 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.1);
   }
-  
-  .card-body {
-    padding: 1rem;
-  }
-  
+
   /* gooleログインボタン */
   .google-login-wrap {
     display: flex;

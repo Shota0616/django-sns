@@ -7,13 +7,14 @@
     color: darkgray;
 }
 
-.tweet-card {
-    border-radius: 0.5rem;
-    text-decoration: none;
-}
-
 .tweet-card:hover {
     border-color: gray;
+}
+
+.tweet-card-detail:hover {
+    border-color: rgba(0,0,0,.125);
+    border-radius: 0.5rem;
+    text-decoration: none;
 }
 
 .tweets {
@@ -31,4 +32,19 @@
 
 .tweet-text {
     font-size: 16px;
+}
+
+.sousa {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.tweet-edit {
+    text-decoration: none;
+    color: white;
+}
+
+a.tweet-edit:hover {
+    color: white;
 }
