@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .models import Tweet
-from .forms import TweetForm
+from .forms import TweetForm, TweetEditForm
 
 # 初期画面
 class IndexView(TemplateView):
@@ -49,15 +49,21 @@ class TweetDetailView(View):
 class TweetEditView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        form = TweetEditForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
         return render(request, 'app/tweet_edit.html', {'form': form})
 
     def post(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetForm(request.POST, instance=tweet)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
+        form = TweetEditForm(request.POST, instance=tweet)
         if form.is_valid():
             form.save()
-            return redirect('tweets:detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
+            return redirect('tweet_detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
         else:
             return render(request, 'app/tweet_edit.html', {'form': form})
 

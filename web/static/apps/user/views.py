@@ -48,8 +48,8 @@ class ProfileEditView(View):
         if form.is_valid():
             form.save(user_data)
             return redirect('profile')
-
-        return render(request, 'account/profile.html', {'form': form})
+        else:
+            return render(request, 'account/profile.html', {'form': form})
 
 
 # allauthのviewをオーバーライド

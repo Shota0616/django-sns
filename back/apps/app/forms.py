@@ -32,7 +32,7 @@ class TweetForm(forms.ModelForm):
 
 # ユーザー編集フォーム
 class TweetEditForm(forms.ModelForm):
-    text = forms.CharField(max_length=300, widget=forms.TextInput(attrs={'class':'form-control'}))
+    text = forms.CharField(max_length=300, widget=forms.Textarea(attrs={'class':'form-control'}))
 
     class Meta:
         model = Tweet

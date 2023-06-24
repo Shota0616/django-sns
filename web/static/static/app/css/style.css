@@ -7,17 +7,14 @@
     color: darkgray;
 }
 
-.tweet-card {
-    border-radius: 0.5rem;
-    text-decoration: none;
-}
-
 .tweet-card:hover {
     border-color: gray;
 }
 
 .tweet-card-detail:hover {
     border-color: rgba(0,0,0,.125);
+    border-radius: 0.5rem;
+    text-decoration: none;
 }
 
 .tweets {
