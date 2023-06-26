@@ -20,7 +20,7 @@
         </div>
         {% if tweet.user == current_user %}
         <div class="sousa">
-            <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary" type="button">
                 <a class="tweet-edit" href="{% url 'tweet_edit' tweet.id %}">編集</a>
             </button>
         </div>
