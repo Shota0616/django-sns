@@ -15,7 +15,7 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         user_data = User.objects.get(id=request.user.id)
         try:
-            tweet_data = Tweet.objects.filter(user=user_data).all()
+            tweet_data = Tweet.objects.filter(user=user_data).order_by('updated_at').reverse().all()
         except User.DoesNotExist:
             pass
         context = {

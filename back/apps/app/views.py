@@ -8,15 +8,10 @@ from .models import Tweet
 from .forms import TweetForm, TweetEditForm
 
 # 初期画面
-class IndexView(TemplateView):
-    template_name = "app/index.html"
-
-
-# Tweetの一覧を表示(非ログイン時)
-class TweetListView(View):
+class IndexView(View):
     def get(self, request, *args, **kwargs):
-        tweets = Tweet.objects.all()  # 全てのツイートを取得
-        return render(request, 'app/list.html', {'tweets': tweets})
+        tweets = Tweet.objects.select_related('user').order_by('updated_at').reverse().all()  # 全てのツイートを取得
+        return render(request, 'app/index.html', {'tweets': tweets})
 
 # Tweetを作成
 class TweetCreateView(View):

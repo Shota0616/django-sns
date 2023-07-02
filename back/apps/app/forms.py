@@ -25,11 +25,6 @@ class TweetForm(forms.ModelForm):
             raise forms.ValidationError('何も入力されていません。')
         return text
 
-    # def save(self, user_data):
-    #     user_data.text = self.cleaned_data['text']
-    #     user_data.save()
-    #     return user_data
-
 # ユーザー編集フォーム
 class TweetEditForm(forms.ModelForm):
     text = forms.CharField(max_length=300, widget=forms.Textarea(attrs={'class':'form-control'}))
