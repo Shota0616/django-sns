@@ -4,8 +4,8 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-from .models import Tweet
-from .forms import TweetForm, TweetEditForm
+from .models import Tweet, Comment
+from .forms import TweetForm, TweetEditForm, CommentForm
 
 # 初期画面
 class IndexView(View):
@@ -32,13 +32,28 @@ class TweetCreateView(View):
 # Tweet詳細
 class TweetDetailView(View):
     def get(self, request, pk, *args, **kwargs):
-        tweet = Tweet.objects.all().select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
+        form = CommentForm(request.POST)
+        tweet = Tweet.objects.select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
+        comments = Comment.objects.select_related('user').filter(tweet_id=pk)
         current_user = request.user
         context = {
             'tweet': tweet,
+            'comments': comments,
             'current_user': current_user,
+            'form': form,
         }
         return render(request, 'app/tweet_detail.html', context)
+
+    def post(self, request, pk, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user  # ログインしているユーザーを設定
+            comment.tweet = Tweet.objects.get(id=pk)  # コメントの対象となるTweetを取得
+            comment.save()
+            return redirect('tweet_detail', pk=pk)  # Tweetの詳細ページにリダイレクト
+        else:
+            return render(request, 'app/tweet_detail.html', {'form': form})
 
 # Tweet編集
 class TweetEditView(View):
@@ -65,10 +80,16 @@ class TweetEditView(View):
 # Tweet削除
 class TweetDeleteView(View):
     def get(self, request, pk, *args, **kwargs):
-        tweet = get_object_or_404(Tweet, pk=pk)
-        return render(request, 'app/confirm_delete.html', {'tweet': tweet})
+        tweet = Tweet.objects.select_related('user').get(id=pk)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/tweet_delete.html', {'tweet': tweet})
 
     def post(self, request, pk, *args, **kwargs):
-        tweet = get_object_or_404(Tweet, pk=pk)
-        tweet.delete()
-        return redirect('tweets:list')  # Tweetの一覧ページにリダイレクト
+        tweet = get_object_or_404(Tweet, pk=pk) # Add this line
+        if request.user != tweet.user:
+            return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
+        else:
+            tweet.delete()
+            return redirect('profile')  # Tweetの一覧ページにリダイレクト

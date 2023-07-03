@@ -14,13 +14,15 @@ from user.forms import ProfileEditForm, MyCustomSignupForm
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
         user_data = User.objects.get(id=request.user.id)
+        current_user = request.user
         try:
-            tweet_data = Tweet.objects.filter(user=user_data).all()
+            tweet_data = Tweet.objects.select_related('user').filter(user=user_data).order_by('updated_at').reverse().all()
         except User.DoesNotExist:
             pass
         context = {
             'user_data': user_data,
             'tweet_data': tweet_data,
+            'current_user': current_user,
         }
         return render(request, 'account/profile.html', context)
 

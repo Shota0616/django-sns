@@ -11,6 +11,12 @@
     border-color: gray;
 }
 
+.tweet-card-detail {
+    max-width: 700px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 .tweet-card-detail:hover {
     border-color: rgba(0,0,0,.125);
     border-radius: 0.5rem;
@@ -47,4 +53,45 @@
 
 a.tweet-edit:hover {
     color: white;
+}
+
+.comment-btn {
+    max-width: 200px;
+}
+
+.comment-card {
+    text-decoration: none;
+}
+
+.custom-dropdown::after {
+    display: none;
+    outline: none;
+}
+
+.custom-dropdown {
+    background-color: transparent;
+    color: #000; /* Adjust the color of the text inside the button */
+    outline: none;
+}
+
+.custom-dropdown:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.custom-dropdown:hover {
+    background-color: #ddd; /* Adjust the color when the button is hovered */
+}
+
+.dropdown-menu-tweet {
+    margin-top: 3px;
+    border-radius: 0.5rem;
+}
+
+.tweet-delete-btn {
+    color: #e55858;
+}
+
+.tweet-delete-btn:hover {
+    color: #e55858;
 }
