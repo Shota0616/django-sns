@@ -5,13 +5,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .models import Tweet, Comment
-from .forms import TweetForm, TweetEditForm, CommentForm
+from .forms import TweetForm, CommentForm
 
 # 初期画面
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         tweets = Tweet.objects.select_related('user').order_by('updated_at').reverse().all()  # 全てのツイートを取得
-        return render(request, 'app/index.html', {'tweets': tweets})
+        current_user = request.user
+        context = {
+            'tweets': tweets,
+            'current_user': current_user,
+        }
+        return render(request, 'app/index.html', context)
 
 # Tweetを作成
 class TweetCreateView(View):
@@ -59,7 +64,7 @@ class TweetDetailView(View):
 class TweetEditView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetEditForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        form = TweetForm(instance=tweet)  # フォームを初期化、初期値はtweet
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != tweet.user:
             return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
@@ -70,7 +75,7 @@ class TweetEditView(View):
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != tweet.user:
             return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
-        form = TweetEditForm(request.POST, instance=tweet)
+        form = TweetForm(request.POST, instance=tweet)
         if form.is_valid():
             form.save()
             return redirect('tweet_detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
@@ -93,3 +98,45 @@ class TweetDeleteView(View):
         else:
             tweet.delete()
             return redirect('profile')  # Tweetの一覧ページにリダイレクト
+
+
+# Comment編集
+class CommentEditView(View):
+    def get(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        form = CommentForm(request.POST, instance=comment)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/tweet_edit.html', {'form': form})
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('tweet_detail', pk=comment.pk)  # 編集後のTweetの詳細ページにリダイレクト
+        else:
+            return render(request, 'app/tweet_edit.html', {'form': form})
+
+
+# Comment削除
+class CommentDeleteView(View):
+    def get(self, request, pk, *args, **kwargs):
+        comment = Comment.objects.select_related('user').get(id=pk)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/tweet_delete.html', {'tweet': comment})
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk) # Add this line
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        else:
+            comment.delete()
+            return redirect('profile')  # Tweetの一覧ページにリダイレクト
+
