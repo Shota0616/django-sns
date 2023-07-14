@@ -2,16 +2,40 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import models
+from django.db.models import Count
 
-
-from .models import Tweet, Comment
-from .forms import TweetForm, TweetEditForm, CommentForm
+from .models import Tweet, Comment, Like
+from .forms import TweetForm, CommentForm
 
 # 初期画面
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        tweets = Tweet.objects.select_related('user').order_by('updated_at').reverse().all()  # 全てのツイートを取得
-        return render(request, 'app/index.html', {'tweets': tweets})
+        tweets = Tweet.objects.select_related('user').order_by('-updated_at')
+        current_user = request.user
+        tweet_likes = self.get_tweet_likes(tweets)  # ツイートごとのいいね数を取得
+
+        context = {
+            'tweets': tweets,
+            'current_user': current_user,
+            'tweet_likes': tweet_likes,
+            'is_user_liked_for_post': self.is_user_liked_for_tweet(request.user),
+        }
+        return render(request, 'app/index.html', context)
+
+    def get_tweet_likes(self, tweets):
+        tweet_ids = [tweet.id for tweet in tweets]
+        tweet_likes = (
+            Like.objects
+            .filter(tweet_id__in=tweet_ids)
+            .values('tweet_id')
+            .annotate(count=Count('id'))
+        )
+        tweet_likes_dict = {like['tweet_id']: like['count'] for like in tweet_likes}
+        return tweet_likes_dict
+
+    def is_user_liked_for_tweet(self, user):
+        return Like.objects.filter(user=user).exists()
 
 # Tweetを作成
 class TweetCreateView(View):
@@ -59,7 +83,7 @@ class TweetDetailView(View):
 class TweetEditView(View):
     def get(self, request, pk, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=pk)
-        form = TweetEditForm(instance=tweet)  # フォームを初期化、初期値はtweet
+        form = TweetForm(instance=tweet)  # フォームを初期化、初期値はtweet
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != tweet.user:
             return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
@@ -70,7 +94,7 @@ class TweetEditView(View):
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != tweet.user:
             return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
-        form = TweetEditForm(request.POST, instance=tweet)
+        form = TweetForm(request.POST, instance=tweet)
         if form.is_valid():
             form.save()
             return redirect('tweet_detail', pk=tweet.pk)  # 編集後のTweetの詳細ページにリダイレクト
@@ -93,3 +117,68 @@ class TweetDeleteView(View):
         else:
             tweet.delete()
             return redirect('profile')  # Tweetの一覧ページにリダイレクト
+
+
+# Comment編集
+class CommentEditView(View):
+    def get(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        form = CommentForm(request.POST, instance=comment)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/tweet_edit.html', {'form': form})
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('tweet_detail', pk=comment.pk)  # 編集後のTweetの詳細ページにリダイレクト
+        else:
+            return render(request, 'app/tweet_edit.html', {'form': form})
+
+
+# Comment削除
+class CommentDeleteView(View):
+    def get(self, request, pk, *args, **kwargs):
+        comment = Comment.objects.select_related('user').get(id=pk)
+        # ログインしているユーザーがツイートの作成者と一致するか確認
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/tweet_delete.html', {'tweet': comment})
+
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk) # Add this line
+        if request.user != comment.user:
+            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+        else:
+            comment.delete()
+            return redirect('profile')  # Tweetの一覧ページにリダイレクト
+
+# tweetのいいね用関数
+def like(request):
+    # likeボタンを押したtweetのpkを取得
+    tweet_pk = request.POST.get('tweet_pk')
+    # tweetをいいねしたユーザーをcontextに格納
+    context = {
+        'user': f'{ request.user }',
+    }
+    tweet = get_object_or_404(Tweet, pk=tweet_pk)
+    like = Like.objects.filter(target=article, user_id=request.user)
+
+    if like.exists():
+        like.delete()
+        context['method'] = 'delete'
+    else:
+        like.create(target=article, user_id=request.user)
+        context['method'] = 'create'
+
+    context['like_count'] = article.like_set.count()
+
+    return JsonResponse(context)
+
+

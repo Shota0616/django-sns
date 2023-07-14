@@ -1,20 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 
-from .models import Tweet, Comment
+from .models import Tweet, Comment, Like
 from .forms import TweetForm, CommentForm
+from .utils import get_tweet_likes, is_user_liked_for_tweet
 
 # 初期画面
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        tweets = Tweet.objects.select_related('user').order_by('updated_at').reverse().all()  # 全てのツイートを取得
+        tweets = Tweet.objects.select_related('user').order_by('-updated_at')
         current_user = request.user
+        tweet_likes = get_tweet_likes(tweets)  # ツイートごとのいいね数を取得
+
         context = {
             'tweets': tweets,
             'current_user': current_user,
+            'tweet_likes': tweet_likes,
+            'is_user_liked_for_post': is_user_liked_for_tweet(request.user),
         }
         return render(request, 'app/index.html', context)
 
@@ -139,4 +145,24 @@ class CommentDeleteView(View):
         else:
             comment.delete()
             return redirect('profile')  # Tweetの一覧ページにリダイレクト
+
+# tweetのいいね用関数
+def like_tweet(request):
+    # likeボタンを押したtweetのpkを取得
+    tweet_pk = request.POST.get('tweet_pk')
+    # tweetをいいねしたユーザーをcontextに格納
+    context = {
+        'user': f'{ request.user }',
+    }
+    tweet = get_object_or_404(Tweet, pk=tweet_pk)
+    like = Like.objects.filter(tweet=tweet, user=request.user)
+
+    if like.exists():
+        like.delete()
+        context['method'] = 'delete'
+    else:
+        like.create(tweet=tweet, user=request.user)
+        context['method'] = 'create'
+
+    return JsonResponse(context)
 
