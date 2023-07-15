@@ -9,7 +9,6 @@
 <!-- ユーザーのtweet表示 -->
 <div class="card card-profile my-5 mx-auto">
     <div class="card-body">
-        <h5 class="card-title text-center">ツイート</h5>
         {% if tweets %}
             {% for tweet in tweets %}
                 <div class="card card my-3 tweet-card">
@@ -18,8 +17,9 @@
                             <img src="{{ tweet.user.profile_image.url }}" />
                         </div>
                         <div class="ml-3 tweet-content">
-                            <div class="tweet-date">
-                                {{ tweet.updated_at|date:"Y年m月d日 H:i" }}
+                            <div class="tweet-data d-flex justify-content-between">
+                                <div class="tweet-user-nickname">{{ tweet.user.nickname }}</div>
+                                <div class="tweet-date">{{ tweet.updated_at|date:"Y年m月d日 H:i" }}</div>
                             </div>
                             <div class="tweet-text">
                                 {{ tweet.text }}
@@ -49,7 +49,7 @@
                         <!-- ログインしているユーザーがlikeしていないとき or ユーザーがログインしていないとき -->
                         {% else %}
                         <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-                            <i class="far fa-heart text-danger like-for-post-icon"></i>
+                            <i class="far fa-heart like-for-post-icon"></i>
                         </button>
                         {% endif %}
                         <!-- likeの数 -->
@@ -67,7 +67,7 @@
 
 
 
-<!-- MDB -->
+<!-- js -->
 {% block extrajs %}
 <script>
 document.querySelectorAll('.ajax-like-for-post').forEach(button => {

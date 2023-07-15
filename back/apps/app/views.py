@@ -13,18 +13,30 @@ from app.utils import get_tweet_likes, get_user_liked_tweet
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         tweets = Tweet.objects.select_related('user').order_by('-updated_at')
-        current_user = request.user
-        # tweetごとのいいね数をdictで取得
-        tweet_likes = get_tweet_likes(tweets)
-        # ログイン中のユーザーがいいねしているtweetを取得
-        user_liked_tweet = get_user_liked_tweet(current_user)
+        # ログインしているときの処理
+        if request.user.is_authenticated:
+            current_user = request.user
+            # tweetごとのいいね数をdictで取得
+            tweet_likes = get_tweet_likes(tweets)
+            # ログイン中のユーザーがいいねしているtweetを取得
+            user_liked_tweet = get_user_liked_tweet(request, current_user)
+            context = {
+                'tweets': tweets,
+                'current_user': current_user,
+                'tweet_likes': tweet_likes,
+                'is_user_liked_for_tweet': user_liked_tweet,
+            }
+        # ゲストユーザーのときの処理
+        else:
+            # tweetごとのいいね数をdictで取得
+            tweet_likes = get_tweet_likes(tweets)
+            # ログイン中のユーザーがいいねしているtweetを取得
+            context = {
+                'tweets': tweets,
+                'tweet_likes': tweet_likes,
+            }
 
-        context = {
-            'tweets': tweets,
-            'current_user': current_user,
-            'tweet_likes': tweet_likes,
-            'is_user_liked_for_tweet': user_liked_tweet,
-        }
+
         return render(request, 'app/index.html', context)
 
 # Tweetを作成
@@ -51,15 +63,24 @@ class TweetDetailView(View):
         comments = Comment.objects.select_related('user').filter(tweet_id=pk)
         current_user = request.user
         tweet_likes = get_tweet_likes(tweet)
-        user_liked_tweet = get_user_liked_tweet(current_user)
-        context = {
-            'tweet': tweet,
-            'comments': comments,
-            'current_user': current_user,
-            'form': form,
-            'tweet_likes': tweet_likes,
-            'is_user_liked_for_tweet': user_liked_tweet,
-        }
+        if request.user.is_authenticated:
+            user_liked_tweet = get_user_liked_tweet(request, current_user)
+            context = {
+                'tweet': tweet,
+                'comments': comments,
+                'current_user': current_user,
+                'form': form,
+                'tweet_likes': tweet_likes,
+                'is_user_liked_for_tweet': user_liked_tweet,
+            }
+        else:
+            context = {
+                'tweet': tweet,
+                'comments': comments,
+                'current_user': current_user,
+                'form': form,
+                'tweet_likes': tweet_likes,
+            }
         return render(request, 'app/tweet_detail.html', context)
 
     def post(self, request, pk, *args, **kwargs):

@@ -1,10 +1,16 @@
 .tweet-content {
     margin: 0 10px 0 10px;
+    width: 100%;
 }
 
 .tweet-date {
     font-size: 12px;
     color: darkgray;
+}
+
+.tweet-user-nickname {
+    padding-right: 0;
+    font-weight: bold;
 }
 
 .tweet-card:hover {
@@ -42,8 +48,9 @@
 
 .sousa {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 3px;
+    right: 2px;
+    font-size: 13px;
 }
 
 .tweet-edit {
@@ -73,6 +80,7 @@ a.tweet-edit:hover {
     color: #000; /* Adjust the color of the text inside the button */
     outline: none;
     box-shadow: none;
+    padding: 0.3rem 0.7rem;
 }
 
 .custom-dropdown:focus {

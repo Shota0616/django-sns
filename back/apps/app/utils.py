@@ -23,9 +23,12 @@ def get_tweet_likes(tweets):
 
 
 # 引数に指定したuserのlike済のtweetを取得
-def get_user_liked_tweet(user):
-    is_user_liked_for_tweet = Like.objects.filter(user=user).values_list('tweet_id', flat=True)
-    is_user_liked_for_tweet_list = list(is_user_liked_for_tweet)
-    return is_user_liked_for_tweet_list
+def get_user_liked_tweet(request, user):
+    if request.user.is_authenticated:
+        is_user_liked_for_tweet = Like.objects.filter(user=user).values_list('tweet_id', flat=True)
+        is_user_liked_for_tweet_list = list(is_user_liked_for_tweet)
+        return is_user_liked_for_tweet_list
+    else:
+        pass
 
 #    tweet_likes = Like.objects.filter(tweet_id__in=tweet_ids).values('tweet_id').annotate(count=Count('id'))

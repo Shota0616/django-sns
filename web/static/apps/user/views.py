@@ -23,7 +23,7 @@ class ProfileView(View):
         # tweetごとのいいね数をdictで取得
         tweet_likes = get_tweet_likes(tweet_data)
         # ログイン中のユーザーがいいねしているtweetを取得
-        user_liked_tweet = get_user_liked_tweet(user_data.id)
+        user_liked_tweet = get_user_liked_tweet(request, user_data.id)
         context = {
             'user_data': user_data,
             'tweet_data': tweet_data,
