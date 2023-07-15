@@ -1,7 +1,7 @@
 from django import forms
 
 
-from .models import Tweet, Comment
+from app.models import Tweet, Comment
 
 
 class TweetForm(forms.ModelForm):

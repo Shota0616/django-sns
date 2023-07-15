@@ -5,9 +5,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 
-from .models import Tweet, Comment, Like
-from .forms import TweetForm, CommentForm
-from .utils import get_tweet_likes, is_user_liked_for_tweet
+from app.models import Tweet, Comment, Like
+from app.forms import TweetForm, CommentForm
+from app.utils import get_tweet_likes, is_user_liked_for_tweet
 
 # 初期画面
 class IndexView(View):
@@ -20,7 +20,7 @@ class IndexView(View):
             'tweets': tweets,
             'current_user': current_user,
             'tweet_likes': tweet_likes,
-            'is_user_liked_for_post': is_user_liked_for_tweet(request.user),
+            'is_user_liked_for_tweet': is_user_liked_for_tweet(request.user),
         }
         return render(request, 'app/index.html', context)
 

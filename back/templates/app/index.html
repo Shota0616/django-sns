@@ -40,19 +40,26 @@
                     </div>
                     {% endif %}
                     <div class="card-body">
+                        <!-- ログインしているユーザーがlikeしているとき -->
                         {% if is_user_liked_for_tweet %}
                         <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-                          <!-- すでにlikeしている時はfasクラス -->
-                          <i class="fas fa-heart text-danger like-for-post-icon"></i>
+                            <i class="fas fa-heart text-danger like-for-post-icon"></i>
                         </button>
+                        <!-- ログインしているユーザーがlikeしていないとき -->
                         {% else %}
                         <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-                          <!-- likeしていないときはfarクラス -->
-                          <i class="far fa-heart text-danger like-for-post-icon"></i>
+                            <i class="far fa-heart text-danger like-for-post-icon"></i>
                         </button>
                         {% endif %}
                         <!-- likeの数 -->
-                        <span class="like-for-post-count">{{ tweet_likes }}</span>                    </div>
+                        <span class="like-for-post-count">
+                        {% with likes=tweet_likes %}
+                            {% with tweet_id=tweet.id %}
+                                {{ likes.tweet_id }}
+                            {% endwith %}
+                        {% endwith %}
+                        </span>
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
