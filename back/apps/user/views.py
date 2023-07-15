@@ -17,7 +17,8 @@ class ProfileView(View):
         user_data = User.objects.get(id=request.user.id)
         current_user = request.user
         try:
-            tweet_data = Tweet.objects.select_related('user').filter(user=user_data).order_by('updated_at').reverse().all()
+            # tweet_data = Tweet.objects.select_related('user').filter(user=current_user).all().order_by('created_at').reverse()
+            tweet_data = Tweet.objects.filter(user=current_user).order_by('created_at').reverse()
         except User.DoesNotExist:
             pass
         # tweetごとのいいね数をdictで取得

@@ -12,7 +12,7 @@ from app.utils import get_tweet_likes, get_user_liked_tweet
 # 初期画面
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        tweets = Tweet.objects.select_related('user').order_by('-updated_at')
+        tweets = Tweet.objects.select_related('user').order_by('created_at').reverse()
         # ログインしているときの処理
         if request.user.is_authenticated:
             current_user = request.user
