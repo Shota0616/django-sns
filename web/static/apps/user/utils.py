@@ -1,4 +1,4 @@
-from .models import User
+from user.models import User
 import uuid
 
 # ユニークなIDを生成

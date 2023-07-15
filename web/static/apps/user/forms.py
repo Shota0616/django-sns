@@ -3,8 +3,8 @@ from django.contrib.auth import password_validation
 
 from allauth.account.forms import SignupForm
 
-from .utils import generate_unique_id
-from .models import User
+from user.utils import generate_unique_id
+from user.models import User
 
 
 # ユーザー編集フォーム

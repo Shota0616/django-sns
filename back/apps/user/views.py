@@ -9,6 +9,7 @@ from allauth.account import forms
 from user.models import User
 from app.models import Tweet
 from user.forms import ProfileEditForm, MyCustomSignupForm
+from app.utils import get_tweet_likes, get_user_liked_tweet
 
 
 class ProfileView(View):
@@ -19,10 +20,16 @@ class ProfileView(View):
             tweet_data = Tweet.objects.select_related('user').filter(user=user_data).order_by('updated_at').reverse().all()
         except User.DoesNotExist:
             pass
+        # tweetごとのいいね数をdictで取得
+        tweet_likes = get_tweet_likes(tweet_data)
+        # ログイン中のユーザーがいいねしているtweetを取得
+        user_liked_tweet = get_user_liked_tweet(user_data.id)
         context = {
             'user_data': user_data,
             'tweet_data': tweet_data,
             'current_user': current_user,
+            'tweet_likes': tweet_likes,
+            'is_user_liked_for_tweet': user_liked_tweet,
         }
         return render(request, 'account/profile.html', context)
 

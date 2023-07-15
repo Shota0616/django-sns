@@ -7,20 +7,23 @@ from django.shortcuts import get_object_or_404
 
 from app.models import Tweet, Comment, Like
 from app.forms import TweetForm, CommentForm
-from app.utils import get_tweet_likes, is_user_liked_for_tweet
+from app.utils import get_tweet_likes, get_user_liked_tweet
 
 # 初期画面
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         tweets = Tweet.objects.select_related('user').order_by('-updated_at')
         current_user = request.user
-        tweet_likes = get_tweet_likes(tweets)  # ツイートごとのいいね数を取得
+        # tweetごとのいいね数をdictで取得
+        tweet_likes = get_tweet_likes(tweets)
+        # ログイン中のユーザーがいいねしているtweetを取得
+        user_liked_tweet = get_user_liked_tweet(current_user)
 
         context = {
             'tweets': tweets,
             'current_user': current_user,
             'tweet_likes': tweet_likes,
-            'is_user_liked_for_tweet': is_user_liked_for_tweet(request.user),
+            'is_user_liked_for_tweet': user_liked_tweet,
         }
         return render(request, 'app/index.html', context)
 
@@ -47,11 +50,15 @@ class TweetDetailView(View):
         tweet = Tweet.objects.select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
         comments = Comment.objects.select_related('user').filter(tweet_id=pk)
         current_user = request.user
+        tweet_likes = get_tweet_likes(tweet)
+        user_liked_tweet = get_user_liked_tweet(current_user)
         context = {
             'tweet': tweet,
             'comments': comments,
             'current_user': current_user,
             'form': form,
+            'tweet_likes': tweet_likes,
+            'is_user_liked_for_tweet': user_liked_tweet,
         }
         return render(request, 'app/tweet_detail.html', context)
 
@@ -149,12 +156,13 @@ class CommentDeleteView(View):
 # tweetのいいね用関数
 def like_tweet(request):
     # likeボタンを押したtweetのpkを取得
-    tweet_pk = request.POST.get('tweet_pk')
+    # tweet_pk = request.POST.get('tweet_pk')
+    tweet_pk = int(request.POST.get('tweet_pk'))
     # tweetをいいねしたユーザーをcontextに格納
     context = {
         'user': f'{ request.user }',
     }
-    tweet = get_object_or_404(Tweet, pk=tweet_pk)
+    tweet = Tweet.objects.get(id=tweet_pk)
     like = Like.objects.filter(tweet=tweet, user=request.user)
 
     if like.exists():
@@ -163,6 +171,9 @@ def like_tweet(request):
     else:
         like.create(tweet=tweet, user=request.user)
         context['method'] = 'create'
+
+    tweet_likes_dict = get_tweet_likes(tweet)
+    context['tweet_likes'] = tweet_likes_dict[tweet_pk]
 
     return JsonResponse(context)
 

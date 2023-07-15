@@ -2,6 +2,7 @@
 
 {% load widget_tweaks %}
 {% load i18n %}
+{% load custom_filters %}
 
 {% block content %}
 
@@ -39,13 +40,13 @@
                         </div>
                     </div>
                     {% endif %}
-                    <div class="card-body">
+                    <div class="tweet-u-card-body card-body">
                         <!-- ログインしているユーザーがlikeしているとき -->
-                        {% if is_user_liked_for_tweet %}
+                        {% if tweet.id in is_user_liked_for_tweet %}
                         <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-                            <i class="fas fa-heart text-danger like-for-post-icon"></i>
+                            <i class="fas fa-heart like-for-post-icon"></i>
                         </button>
-                        <!-- ログインしているユーザーがlikeしていないとき -->
+                        <!-- ログインしているユーザーがlikeしていないとき or ユーザーがログインしていないとき -->
                         {% else %}
                         <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
                             <i class="far fa-heart text-danger like-for-post-icon"></i>
@@ -53,11 +54,7 @@
                         {% endif %}
                         <!-- likeの数 -->
                         <span class="like-for-post-count">
-                        {% with likes=tweet_likes %}
-                            {% with tweet_id=tweet.id %}
-                                {{ likes.tweet_id }}
-                            {% endwith %}
-                        {% endwith %}
+                        {{ tweet_likes | get_value:tweet.id }}
                         </span>
                     </div>
                 </div>
@@ -74,39 +71,42 @@
 {% block extrajs %}
 <script>
 document.querySelectorAll('.ajax-like-for-post').forEach(button => {
+    // likeボタンが押下されたら実行
     button.addEventListener('click', e => {
-      if ("{{ user.is_authenticated }}" === "False") {
-        window.location.href = '{% url "account_login" %}';
-      }
-      e.preventDefault();
-      const tweetPk = button.getAttribute('data-tweet-pk');
-      const url = '{% url "like_tweet" %}';
-      const formData = new FormData();
-      formData.append('tweet_pk', tweetPk);
-      fetch(url, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}'
+        // もしログインしていなかったらログイン画面に遷移
+        if ("{{ user.is_authenticated }}" === "False") {
+            window.location.href = '{% url "account_login" %}';
         }
-      }).then(response => {
-        return response.json();
-      }).then(response => {
-        const counter = button.nextElementSibling;
-        const icon = button.querySelector('.like-for-post-icon');
-        counter.textContent = response.like_count;
-        if (response.method === 'create') {
-          icon.classList.remove('far');
-          icon.classList.add('fas');
-        } else {
-          icon.classList.remove('fas');
-          icon.classList.add('far');
-        }
-      }).catch(error => {
-        console.log(error);
-      });
+        // イベントのデフォルトの動作をキャンセル
+        e.preventDefault();
+        // 各種変数に代入
+        const tweetPk = button.getAttribute('data-tweet-pk');
+        const url = '{% url "like_tweet" %}';
+        const formData = new FormData();
+        formData.append('tweet_pk', tweetPk);
+        // fetchAPIでPOST送信
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        }).then(response => {
+            return response.json();
+        }).then(response => {
+            const counter = button.nextElementSibling;
+            const icon = button.querySelector('.like-for-post-icon');
+            counter.textContent = response.tweet_likes;
+            if (response.method === 'create') {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }).catch(error => {
+            console.log(error);
+        });
     });
-  });
+});
 </script>
 {% endblock %}
 

@@ -96,3 +96,15 @@ a.tweet-edit:hover {
 .tweet-delete-btn:hover {
     color: #e55858;
 }
+
+.like-for-post-count {
+    color: darkgray;
+}
+
+.tweet-u-card-body {
+    padding-top: 1rem;
+}
+
+.like-for-post-icon {
+    color: #ffa8a8;
+}
