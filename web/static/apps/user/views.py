@@ -13,24 +13,34 @@ from app.utils import get_tweet_likes, get_user_liked_tweet
 
 
 class ProfileView(View):
-    def get(self, request, *args, **kwargs):
-        user_data = User.objects.get(id=request.user.id)
+    def get(self, request, pk, *args, **kwargs):
+
+        user_data = User.objects.get(id=pk)
         current_user = request.user
         try:
-            tweet_data = Tweet.objects.select_related('user').filter(user=user_data).order_by('updated_at').reverse().all()
+            # tweet_data = Tweet.objects.select_related('user').filter(user=current_user).all().order_by('created_at').reverse()
+            tweet_data = Tweet.objects.select_related('user').filter(user=pk).order_by('created_at').reverse()
         except User.DoesNotExist:
             pass
         # tweetごとのいいね数をdictで取得
         tweet_likes = get_tweet_likes(tweet_data)
         # ログイン中のユーザーがいいねしているtweetを取得
-        user_liked_tweet = get_user_liked_tweet(request, user_data.id)
-        context = {
-            'user_data': user_data,
-            'tweet_data': tweet_data,
-            'current_user': current_user,
-            'tweet_likes': tweet_likes,
-            'is_user_liked_for_tweet': user_liked_tweet,
-        }
+        if current_user == pk:
+            user_liked_tweet = get_user_liked_tweet(request, current_user)
+            context = {
+                'user_data': user_data,
+                'tweet_data': tweet_data,
+                'current_user': current_user,
+                'tweet_likes': tweet_likes,
+                'is_user_liked_for_tweet': user_liked_tweet,
+            }
+        else:
+            context = {
+                'user_data': user_data,
+                'tweet_data': tweet_data,
+                'current_user': current_user,
+                'tweet_likes': tweet_likes,
+            }
         return render(request, 'account/profile.html', context)
 
 

@@ -1,0 +1,19 @@
+{% load custom_filters %}
+
+<div class="like-btn">
+    <!-- ログインしているユーザーがlikeしているとき -->
+    {% if tweet.id in is_user_liked_for_tweet %}
+    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
+        <i class="fas fa-heart like-for-post-icon"></i>
+    </button>
+    <!-- ログインしているユーザーがlikeしていないとき or ユーザーがログインしていないとき -->
+    {% else %}
+    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
+        <i class="far fa-heart like-for-post-icon"></i>
+    </button>
+    {% endif %}
+    <!-- likeの数 -->
+    <span class="like-for-post-count">
+    {{ tweet_likes | get_value:tweet.id }}
+    </span>
+</div>

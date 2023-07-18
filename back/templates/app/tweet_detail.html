@@ -21,36 +21,9 @@
             </div>
         </div>
     </div>
-    {% if tweet.user == current_user %}
-    <div class="sousa">
-        <!-- Dropdown button -->
-        <div class="dropdown">
-            <button class="btn dropdown-toggle custom-dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                ･･･
-            </button>
-            <ul class="dropdown-menu dropdown-menu-tweet" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item tweet-delete-btn" href="{% url 'tweet_delete' tweet.id %}">削除</a></li>
-                <li><a class="dropdown-item" href="{% url 'tweet_edit' tweet.id %}">編集</a></li>
-            </ul>
-        </div>
-    </div>
-    {% endif %}
+    {% include "common/sousa.html" %}
     <div class="tweet-u-card-body card-body">
-        <!-- ログインしているユーザーがlikeしているとき -->
-        {% if tweet.id in is_user_liked_for_tweet %}
-        <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-            <i class="fas fa-heart like-for-post-icon"></i>
-        </button>
-        <!-- ログインしているユーザーがlikeしていないとき or ユーザーがログインしていないとき -->
-        {% else %}
-        <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
-            <i class="far fa-heart like-for-post-icon"></i>
-        </button>
-        {% endif %}
-        <!-- likeの数 -->
-        <span class="like-for-post-count">
-        {{ tweet_likes | get_value:tweet.id }}
-        </span>
+        {% include "common/like_btn.html" %}
     </div>
 </div>
 

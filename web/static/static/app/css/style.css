@@ -116,3 +116,19 @@ a.tweet-edit:hover {
 .like-for-post-icon {
     color: #ffa8a8;
 }
+
+.profile-image {
+    width: 50px;
+    height: 100%;
+}
+
+.profile-image-a {
+    min-width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.tweet-user-nickname:hover {
+    text-decoration: underline;
+    color: darkgray;
+}
