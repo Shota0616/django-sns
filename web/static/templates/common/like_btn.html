@@ -3,12 +3,12 @@
 <div class="like-btn">
     <!-- ログインしているユーザーがlikeしているとき -->
     {% if tweet.id in is_user_liked_for_tweet %}
-    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
+    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none;padding:0;">
         <i class="fas fa-heart like-for-post-icon"></i>
     </button>
     <!-- ログインしているユーザーがlikeしていないとき or ユーザーがログインしていないとき -->
     {% else %}
-    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none">
+    <button type="button" class="ajax-like-for-post" data-tweet-pk="{{ tweet.pk }}" style="border:none;background:none;padding:0;">
         <i class="far fa-heart like-for-post-icon"></i>
     </button>
     {% endif %}

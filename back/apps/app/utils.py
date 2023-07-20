@@ -1,5 +1,5 @@
 from django.db.models import Count
-from app.models import Like
+from app.models import Like, Comment
 
 
 # 各ツイートとそれぞれのlike数を取得する（引数に取得するツイートをクエリセットで渡す）
@@ -31,4 +31,20 @@ def get_user_liked_tweet(request, user):
     else:
         pass
 
-#    tweet_likes = Like.objects.filter(tweet_id__in=tweet_ids).values('tweet_id').annotate(count=Count('id'))
+def get_tweet_comment(tweets):
+    # 引数のtweetのidをtweet_idsに格納
+    try:
+        tweet_ids = [tweet.id for tweet in tweets]
+    except:
+        tweet_ids = [tweets.id]
+    # カウント
+    tweet_comments = (
+        Comment.objects
+        .filter(tweet_id__in=tweet_ids)
+        .values('tweet_id')
+        .annotate(count=Count('id'))
+    )
+    tweet_comments_dict = {like['tweet_id']: like['count'] for like in tweet_comments}
+    if len(tweet_comments_dict) == 0:
+        tweet_comments_dict = {tweets.id : ""}
+    return tweet_comments_dict

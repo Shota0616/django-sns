@@ -113,10 +113,6 @@ a.tweet-edit:hover {
     padding-top: 1rem;
 }
 
-.like-for-post-icon {
-    color: #ffa8a8;
-}
-
 .profile-image {
     width: 50px;
     height: 100%;
@@ -130,5 +126,22 @@ a.tweet-edit:hover {
 
 .tweet-user-nickname:hover {
     text-decoration: underline;
+    color: darkgray;
+}
+
+.fa-comment {
+    color: #d5d5d5;
+}
+
+.fa-heart {
+    color: #ffa8a8;
+}
+
+.like-btn,.tweet-comment-btn {
+    min-width: 70px;
+    margin: 0 10px;
+}
+
+.tweet-comment-count {
     color: darkgray;
 }

@@ -1,0 +1,11 @@
+{% load custom_filters %}
+
+<div class="tweet-comment-btn">
+    <a style="border:none;background:none;padding:0">
+        <i class="far fa-comment"></i>
+    </a>
+    <!-- likeの数 -->
+    <span class="tweet-comment-count">
+    {{ tweet_comment | get_value:tweet.id }}
+    </span>
+</div>

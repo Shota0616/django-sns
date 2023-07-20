@@ -178,3 +178,7 @@ footer {
     text-decoration: none;
   }
   
+  .tweet-u-card-body {
+    display: flex;
+    flex-direction: row;
+  }

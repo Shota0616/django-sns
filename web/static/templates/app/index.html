@@ -13,13 +13,13 @@
             {% for tweet in tweets %}
                 <div class="card card my-3 tweet-card">
                     <a class="card-body text-dark d-flex" href="{% url 'tweet_detail' tweet.id %}">
-                        <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' user.id %}">
+                        <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
                             <img src="{{ tweet.user.profile_image.url }}" />
                         </a></object>
                         <div class="ml-3 tweet-content">
                             <div class="tweet-data d-flex justify-content-between">
                                 <object>
-                                    <a href="{% url 'profile' user.id %}" class="tweet-user-nickname">{{ tweet.user.nickname }}</a>
+                                    <a href="{% url 'profile' tweet.user.id %}" class="tweet-user-nickname">{{ tweet.user.nickname }}</a>
                                 </object>
                                 <div class="tweet-date">{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
                             </div>
@@ -31,6 +31,7 @@
                     {% include "common/sousa.html" %}
                     <div class="tweet-u-card-body card-body">
                         {% include "common/like_btn.html" %}
+                        {% include "common/comment_btn.html" %}
                     </div>
                 </div>
             {% endfor %}
