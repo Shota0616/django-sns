@@ -42,10 +42,6 @@
     box-shadow: 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.1);
 }
 
-.tweet-text {
-    font-size: 16px;
-}
-
 .sousa {
     position: absolute;
     top: 3px;
@@ -110,7 +106,7 @@ a.tweet-edit:hover {
 }
 
 .tweet-u-card-body {
-    padding-top: 1rem;
+    padding: 0.5rem 1rem 1rem 1rem;
 }
 
 .profile-image {
@@ -122,6 +118,10 @@ a.tweet-edit:hover {
     min-width: 50px;
     border-radius: 50%;
     overflow: hidden;
+}
+
+.tweet-user-nickname {
+    font-size: 16px;
 }
 
 .tweet-user-nickname:hover {
@@ -145,3 +145,19 @@ a.tweet-edit:hover {
 .tweet-comment-count {
     color: darkgray;
 }
+
+
+@media (max-width: 576px) {
+    .profile_table .header {
+        width: 120px;
+        padding: 8px 8px;
+    }
+
+    .profile_table .data {
+      padding: 8px 8px;
+    }
+
+    .tweet-card .card-body {
+        padding: 2rem 0.5rem 1rem 0.5rem;
+    }
+  }

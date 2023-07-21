@@ -53,7 +53,7 @@ class TweetCreateView(View):
             tweet = form.save(commit=False)
             tweet.user = request.user  # ログインしているユーザーを設定
             tweet.save()
-            return redirect('profile')  # Tweetの一覧ページにリダイレクト
+            return redirect('profile', pk=tweet.user.pk)  # Tweetの一覧ページにリダイレクト
         else:
             return render(request, 'app/tweet_create.html', {'form': form})
 
@@ -63,6 +63,8 @@ class TweetDetailView(View):
         form = CommentForm(request.POST)
         tweet = Tweet.objects.select_related('user').get(id=pk) # Tweetを取得、存在しない場合は404エラーを表示
         comments = Comment.objects.select_related('user').filter(tweet_id=pk)
+        # tweetごとのコメント数をdictで取得
+        tweet_comment = get_tweet_comment(tweet)
         current_user = request.user
         tweet_likes = get_tweet_likes(tweet)
         if request.user.is_authenticated:
@@ -73,6 +75,7 @@ class TweetDetailView(View):
                 'current_user': current_user,
                 'form': form,
                 'tweet_likes': tweet_likes,
+                'tweet_comment': tweet_comment,
                 'is_user_liked_for_tweet': user_liked_tweet,
             }
         else:
@@ -82,6 +85,7 @@ class TweetDetailView(View):
                 'current_user': current_user,
                 'form': form,
                 'tweet_likes': tweet_likes,
+                'tweet_comment': tweet_comment,
             }
         return render(request, 'app/tweet_detail.html', context)
 
@@ -133,7 +137,7 @@ class TweetDeleteView(View):
             return redirect('tweet_detail', pk=tweet.pk)  # 一致しなければ、詳細ページにリダイレクト
         else:
             tweet.delete()
-            return redirect('profile')  # Tweetの一覧ページにリダイレクト
+            return redirect('profile', pk=request.user.pk)  # Tweetの一覧ページにリダイレクト
 
 
 # Comment編集
@@ -174,7 +178,7 @@ class CommentDeleteView(View):
             return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
         else:
             comment.delete()
-            return redirect('profile')  # Tweetの一覧ページにリダイレクト
+            return redirect('profile', pk=request.user.pk)  # Tweetの一覧ページにリダイレクト
 
 # tweetのいいね用関数
 def like_tweet(request):

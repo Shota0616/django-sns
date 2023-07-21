@@ -70,7 +70,7 @@ class ProfileEditView(View):
 
         if form.is_valid():
             form.save(user_data)
-            return redirect('profile')
+            return redirect('profile', pk=user_data.pk)
         else:
             return render(request, 'account/profile.html', {'form': form})
 

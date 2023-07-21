@@ -27,7 +27,7 @@ class ProfileView(View):
         # tweetごとのコメント数をdictで取得
         tweet_comment = get_tweet_comment(tweet_data)
         # ログイン中のユーザーがいいねしているtweetを取得
-        if current_user == pk:
+        if current_user.id == pk:
             user_liked_tweet = get_user_liked_tweet(request, current_user)
             context = {
                 'user_data': user_data,
@@ -70,7 +70,7 @@ class ProfileEditView(View):
 
         if form.is_valid():
             form.save(user_data)
-            return redirect('profile')
+            return redirect('profile', pk=user_data.pk)
         else:
             return render(request, 'account/profile.html', {'form': form})
 

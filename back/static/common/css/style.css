@@ -1,3 +1,9 @@
+@media (max-width: 576px) {
+  body {
+    font-size: 13px;
+  }
+}
+
 a {
   color: black;
 }
@@ -77,11 +83,7 @@ footer {
   .error-message {
     color: #FA6964
   }
-  
-  .error-message-card {
-    
-  }
-  
+
   .card-title {
     margin-bottom: 2rem;
     font-size: 1.5rem;

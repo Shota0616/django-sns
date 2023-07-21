@@ -11,7 +11,7 @@
     <div class="card-body">
         {% if tweets %}
             {% for tweet in tweets %}
-                <div class="card card my-3 tweet-card">
+                <div class="card my-3 tweet-card">
                     <a class="card-body text-dark d-flex" href="{% url 'tweet_detail' tweet.id %}">
                         <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
                             <img src="{{ tweet.user.profile_image.url }}" />
@@ -28,8 +28,8 @@
                             </div>
                         </div>
                     </a>
-                    {% include "common/sousa.html" %}
-                    <div class="tweet-u-card-body card-body">
+                    {% include "common/tweet_sousa.html" %}
+                    <div class="tweet-u-card-body">
                         {% include "common/like_btn.html" %}
                         {% include "common/comment_btn.html" %}
                     </div>
