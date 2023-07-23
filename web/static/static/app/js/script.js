@@ -39,10 +39,6 @@ function addLikeButtonEvent(button) {
     });
 }
 
-document.querySelectorAll('.ajax-like-for-post').forEach(button => {
-  addLikeButtonEvent(button);
-});
-
 // 無限スクロール
 var isLoading = false;
 
@@ -83,5 +79,14 @@ function handleScroll() {
         loadMoreTweets();
     }
 }
+
+
+// 最初にドキュメントが読み込まれたら実行する
+window.addEventListener('DOMContentLoaded', function(){
+    // likeボタンのイベントリスナーを登録
+    document.querySelectorAll('.ajax-like-for-post').forEach(button => {
+        addLikeButtonEvent(button);
+    });
+});
 
 window.addEventListener('scroll', handleScroll);
