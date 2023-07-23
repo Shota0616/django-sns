@@ -88,9 +88,17 @@ footer {
     margin-bottom: 2rem;
     font-size: 1.5rem;
   }
-  
-  .card-body {
-    padding: 2rem 1rem 1rem 1rem;
+
+  .tweet-card {
+    margin: 1rem 0 1rem 0;
+  }
+
+  .tweet-card:last-child {
+    margin-bottom: 0;
+  }
+
+  .tweets-card-body {
+    padding: 1rem;
     position: relative;
   }
   

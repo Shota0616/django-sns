@@ -9,36 +9,6 @@ from app.models import Tweet, Comment, Like
 from app.forms import TweetForm, CommentForm
 from app.utils import get_tweet_likes, get_user_liked_tweet, get_tweet_comment
 
-# # 初期画面
-# class IndexView(View):
-#     def get(self, request, *args, **kwargs):
-#         tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()
-#         # tweetごとのいいね数をdictで取得
-#         tweet_likes = get_tweet_likes(tweets)
-#         # tweetごとのコメント数をdictで取得
-#         tweet_comment = get_tweet_comment(tweets)
-#         # ログインしているときの処理
-#         if request.user.is_authenticated:
-#             current_user = request.user
-#             # ログイン中のユーザーがいいねしているtweetを取得
-#             user_liked_tweet = get_user_liked_tweet(request, current_user)
-#             context = {
-#                 'tweets': tweets,
-#                 'current_user': current_user,
-#                 'tweet_likes': tweet_likes,
-#                 'tweet_comment': tweet_comment,
-#                 'is_user_liked_for_tweet': user_liked_tweet,
-#             }
-#         # ゲストユーザーのときの処理
-#         else:
-#             # ログイン中のユーザーがいいねしているtweetを取得
-#             context = {
-#                 'tweets': tweets,
-#                 'tweet_likes': tweet_likes,
-#                 'tweet_comment': tweet_comment,
-#             }
-#         return render(request, 'app/index.html', context)
-
 
 # 初期画面
 class IndexView(View):
@@ -52,6 +22,8 @@ class IndexView(View):
         tweet_likes = get_tweet_likes(tweets)
         # tweetごとのコメント数をdictで取得
         tweet_comment = get_tweet_comment(tweets)
+
+        # ページネーション
         try:
             page = paginator.page(page_number)
         except PageNotAnInteger:
@@ -66,8 +38,8 @@ class IndexView(View):
             # ログイン中のユーザーがいいねしているtweetを取得
             user_liked_tweet = get_user_liked_tweet(request, current_user)
             context = {
+                'tweets': page,
                 'page': page,
-                'tweets': tweets,
                 'current_user': current_user,
                 'tweet_likes': tweet_likes,
                 'tweet_comment': tweet_comment,
@@ -77,6 +49,7 @@ class IndexView(View):
         else:
             # ログイン中のユーザーがいいねしているtweetを取得
             context = {
+                'tweets': page,
                 'page': page,
                 'tweets': tweets,
                 'tweet_likes': tweet_likes,

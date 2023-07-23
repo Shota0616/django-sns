@@ -1,0 +1,33 @@
+<div class="card card-profile my-5 mx-auto tweet-container" data-next-page="{{ tweets.next_page_number }}">
+    <div class="card-body tweets-card-body">
+        {% if tweets %}
+            {% for tweet in tweets %}
+                <div class="card tweet-card">
+                    <a class="card-body text-dark d-flex tweet-card-body" href="{% url 'tweet_detail' tweet.id %}">
+                        <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
+                            <img src="{{ tweet.user.profile_image.url }}" />
+                        </a></object>
+                        <div class="ml-3 tweet-content">
+                            <div class="tweet-data d-flex justify-content-between">
+                                <object>
+                                    <a href="{% url 'profile' tweet.user.id %}" class="tweet-user-nickname">{{ tweet.user.nickname }}</a>
+                                </object>
+                                <div class="tweet-date">{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+                            </div>
+                            <div class="tweet-text">
+                                {{ tweet.text }}
+                            </div>
+                        </div>
+                    </a>
+                    {% include "common/tweet_sousa.html" %}
+                    <div class="tweet-u-card-body">
+                        {% include "common/like_btn.html" %}
+                        {% include "common/comment_btn.html" %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>ツイートはありません。</p>
+        {% endif %}
+    </div>
+</div>
