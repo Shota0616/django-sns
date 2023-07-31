@@ -59,16 +59,4 @@ class Migration(migrations.Migration):
                 'unique_together': {('user', 'tweet')},
             },
         ),
-        migrations.CreateModel(
-            name='Follow',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('followed_at', models.DateTimeField(auto_now_add=True)),
-                ('follower', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following', to=settings.AUTH_USER_MODEL)),
-                ('following', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'unique_together': {('follower', 'following')},
-            },
-        ),
     ]

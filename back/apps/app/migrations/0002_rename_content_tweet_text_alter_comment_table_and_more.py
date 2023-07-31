@@ -20,10 +20,6 @@ class Migration(migrations.Migration):
             table='app_comment',
         ),
         migrations.AlterModelTable(
-            name='follow',
-            table='app_follow',
-        ),
-        migrations.AlterModelTable(
             name='like',
             table='app_like',
         ),

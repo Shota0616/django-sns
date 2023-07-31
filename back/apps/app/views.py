@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views import generic
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from app.models import Tweet, Comment, Like
+from app.models import Tweet, Comment, Like, Follow
+from user.models import User
 from app.forms import TweetForm, CommentForm
 from app.utils import get_tweet_likes, get_user_liked_tweet, get_tweet_comment
 
@@ -33,28 +32,18 @@ class IndexView(View):
             # ページ番号が範囲外の場合は、最後のページを表示します
             page = paginator.page(paginator.num_pages)
         # ログインしているときの処理
+        context = {
+            'tweets': page,
+            'page': page,
+            'tweet_likes': tweet_likes,
+            'tweet_comment': tweet_comment,
+        }
         if request.user.is_authenticated:
             current_user = request.user
             # ログイン中のユーザーがいいねしているtweetを取得
             user_liked_tweet = get_user_liked_tweet(request, current_user)
-            context = {
-                'tweets': page,
-                'page': page,
-                'current_user': current_user,
-                'tweet_likes': tweet_likes,
-                'tweet_comment': tweet_comment,
-                'is_user_liked_for_tweet': user_liked_tweet,
-            }
-        # ゲストユーザーのときの処理
-        else:
-            # ログイン中のユーザーがいいねしているtweetを取得
-            context = {
-                'tweets': page,
-                'page': page,
-                'tweets': tweets,
-                'tweet_likes': tweet_likes,
-                'tweet_comment': tweet_comment,
-            }
+            context['current_user'] = current_user
+            context['is_user_liked_for_tweet'] = user_liked_tweet
         return render(request, 'app/index.html', context)
 
 
@@ -74,6 +63,7 @@ class TweetCreateView(View):
         else:
             return render(request, 'app/tweet_create.html', {'form': form})
 
+
 # Tweet詳細
 class TweetDetailView(View):
     def get(self, request, pk, *args, **kwargs):
@@ -84,26 +74,17 @@ class TweetDetailView(View):
         tweet_comment = get_tweet_comment(tweet)
         current_user = request.user
         tweet_likes = get_tweet_likes(tweet)
+        context = {
+            'tweet': tweet,
+            'comments': comments,
+            'current_user': current_user,
+            'form': form,
+            'tweet_likes': tweet_likes,
+            'tweet_comment': tweet_comment,
+        }
         if request.user.is_authenticated:
             user_liked_tweet = get_user_liked_tweet(request, current_user)
-            context = {
-                'tweet': tweet,
-                'comments': comments,
-                'current_user': current_user,
-                'form': form,
-                'tweet_likes': tweet_likes,
-                'tweet_comment': tweet_comment,
-                'is_user_liked_for_tweet': user_liked_tweet,
-            }
-        else:
-            context = {
-                'tweet': tweet,
-                'comments': comments,
-                'current_user': current_user,
-                'form': form,
-                'tweet_likes': tweet_likes,
-                'tweet_comment': tweet_comment,
-            }
+            context['is_user_liked_for_tweet'] = user_liked_tweet
         return render(request, 'app/tweet_detail.html', context)
 
     def post(self, request, pk, *args, **kwargs):
@@ -116,6 +97,7 @@ class TweetDetailView(View):
             return redirect('tweet_detail', pk=pk)  # Tweetの詳細ページにリダイレクト
         else:
             return render(request, 'app/tweet_detail.html', {'form': form})
+
 
 # Tweet編集
 class TweetEditView(View):
@@ -197,27 +179,70 @@ class CommentDeleteView(View):
             comment.delete()
             return redirect('profile', pk=request.user.pk)  # Tweetの一覧ページにリダイレクト
 
+
 # tweetのいいね用関数
 def like_tweet(request):
-    # likeボタンを押したtweetのpkを取得
-    # tweet_pk = request.POST.get('tweet_pk')
-    tweet_pk = int(request.POST.get('tweet_pk'))
-    # tweetをいいねしたユーザーをcontextに格納
-    context = {
-        'user': f'{ request.user }',
-    }
-    tweet = Tweet.objects.get(id=tweet_pk)
-    like = Like.objects.filter(tweet=tweet, user=request.user)
+    if request.user.is_authenticated:
+        # likeボタンを押したtweetのpkを取得
+        tweet_pk = int(request.POST.get('tweet_pk'))
+        # tweetをいいねしたユーザーをcontextに格納
+        context = {
+            'user': f'{ request.user }',
+        }
+        tweet = Tweet.objects.get(id=tweet_pk)
+        like = Like.objects.filter(tweet=tweet, user=request.user)
 
-    if like.exists():
-        like.delete()
-        context['method'] = 'delete'
+        if like.exists():
+            like.delete()
+            context['method'] = 'delete'
+        else:
+            like.create(tweet=tweet, user=request.user)
+            context['method'] = 'create'
+
+        tweet_likes_dict = get_tweet_likes(tweet)
+        context['tweet_likes'] = tweet_likes_dict[tweet_pk]
+
+        return JsonResponse(context)
     else:
-        like.create(tweet=tweet, user=request.user)
-        context['method'] = 'create'
+        return render(request, 'account/login',)
 
-    tweet_likes_dict = get_tweet_likes(tweet)
-    context['tweet_likes'] = tweet_likes_dict[tweet_pk]
 
-    return JsonResponse(context)
+def follow_unfollow_user(request):
+    if request.user.is_authenticated:
+        to_user_id = int(request.POST.get('to_user_id'))
+        from_user_id = int(request.POST.get('from_user_id'))
+        is_following = Follow.objects.filter(from_user=from_user_id, to_user=to_user_id)
 
+        if is_following.exists():
+            is_following.delete()
+            context = {'method': 'delete'}
+        else:
+            from_user_instance = User.objects.get(id=from_user_id)
+            to_user_instance = User.objects.get(id=to_user_id)
+            is_following.create(from_user=from_user_instance, to_user=to_user_instance)
+            context = {'method': 'create'}
+        return JsonResponse(context)
+    else:
+        # pass
+        return render(request, 'account/login',)
+
+
+
+    # if request.method == 'POST' and request.is_ajax():
+    #     user_to_follow = User.objects.get(id=pk)
+    #     current_user = request.user
+
+    #     if current_user.is_authenticated:
+    #         if current_user != user_to_follow:
+    #             is_following = Follow.objects.filter(follower=current_user, following=user_to_follow).exists()
+
+    #             if is_following:
+    #                 # アンフォロー
+    #                 Follow.objects.filter(follower=current_user, following=user_to_follow).delete()
+    #                 return JsonResponse({'status': 'unfollowed'})
+    #             else:
+    #                 # フォロー
+    #                 Follow.objects.create(follower=current_user, following=user_to_follow)
+    #                 return JsonResponse({'status': 'followed'})
+
+    # return JsonResponse({'status': 'error'})

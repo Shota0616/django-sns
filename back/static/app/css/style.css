@@ -146,7 +146,6 @@ a.tweet-edit:hover {
     color: darkgray;
 }
 
-
 @media (max-width: 576px) {
     .profile_table .header {
         width: 120px;

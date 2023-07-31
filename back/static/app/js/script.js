@@ -1,3 +1,4 @@
+// likeボタン
 function addLikeButtonEvent(button) {
     // likeボタンが押下されたら実行
     button.addEventListener('click', e => {
@@ -12,14 +13,14 @@ function addLikeButtonEvent(button) {
         // 各種変数に代入
         const tweetPk = button.getAttribute('data-tweet-pk');
         const url = button.getAttribute('data-tweet-like-tweet-url');
-        const csrf_token = button.getAttribute('data-csrf-token');
+        const csrfToken = getCookie('csrftoken');
         const formData = new FormData();
         formData.append('tweet_pk', tweetPk);
         // fetchAPIでPOST送信
         fetch(url, {
             method: 'POST',
             body: formData,
-            headers: {'X-CSRFToken': csrf_token}
+            headers: {'X-CSRFToken': csrfToken}
         }).then(response => {
             return response.json();
         }).then(response => {
@@ -80,6 +81,50 @@ function handleScroll() {
     }
 }
 
+// CSRFトークンを取得する関数
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
+// フォローボタン
+function followButtonEvent(button) {
+    button.addEventListener('click', e => {
+        // もしログインしていなかったらログイン画面に遷移
+        const is_authenticated = button.getAttribute('data-is-authenticated');
+        const account_login = button.getAttribute('data-account-login');
+        if (is_authenticated === "False") {
+            window.location.href = account_login;
+        }
+        // イベントのデフォルトの動作をキャンセル
+        e.preventDefault();
+        const fromUserId = button.getAttribute('data-from-user-id');
+        const toUserId = button.getAttribute('data-to-user-id');
+        const url = button.getAttribute('data-follow-user-url');
+        const csrfToken = getCookie('csrftoken');
+        const formData = new FormData();
+        formData.append('from_user_id', fromUserId);
+        formData.append('to_user_id', toUserId);
+        // fetchAPIでPOST送信
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': csrfToken}
+        }).then(response => {
+            return response.json();
+        }).then(response => {
+            if (response.method === 'create') {
+                document.querySelector('.follow-button').textContent = "フォロー解除";
+            } else {
+                document.querySelector('.follow-button').textContent = "フォロー";
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+    });
+}
 
 // 最初にドキュメントが読み込まれたら実行する
 window.addEventListener('DOMContentLoaded', function(){
@@ -87,6 +132,11 @@ window.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.ajax-like-for-post').forEach(button => {
         addLikeButtonEvent(button);
     });
+    // フォローボタンのイベントリスナーを登録
+    document.querySelectorAll('.follow-button').forEach(button => {
+        followButtonEvent(button);
+    });
 });
 
+// スクロールイベント
 window.addEventListener('scroll', handleScroll);

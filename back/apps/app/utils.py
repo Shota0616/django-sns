@@ -1,5 +1,5 @@
 from django.db.models import Count
-from app.models import Like, Comment
+from app.models import Like, Comment, Follow
 
 
 # 各ツイートとそれぞれのlike数を取得する（引数に取得するツイートをクエリセットで渡す）
@@ -31,6 +31,8 @@ def get_user_liked_tweet(request, user):
     else:
         pass
 
+
+# ツイートのコメントを取得
 def get_tweet_comment(tweets):
     # 引数のtweetのidをtweet_idsに格納
     try:

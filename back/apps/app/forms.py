@@ -1,7 +1,6 @@
 from django import forms
 
-
-from app.models import Tweet, Comment
+from app.models import Tweet, Comment, Follow
 
 
 class TweetForm(forms.ModelForm):
@@ -25,7 +24,8 @@ class TweetForm(forms.ModelForm):
             raise forms.ValidationError('何も入力されていません。')
         return text
 
-# ユーザー編集フォーム
+
+# ツイート編集フォーム
 class TweetEditForm(forms.ModelForm):
     text = forms.CharField(max_length=300, widget=forms.Textarea(attrs={'class':'form-control'}))
 
@@ -44,6 +44,7 @@ class TweetEditForm(forms.ModelForm):
         if text == "":
             raise forms.ValidationError('入力してください。')
         return text
+
 
 class CommentForm(forms.ModelForm):
     text = forms.CharField(max_length=300, widget=forms.Textarea(attrs={'class':'form-control'}))

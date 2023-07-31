@@ -7,7 +7,7 @@ import pymysql
 # connect mysql
 pymysql.install_as_MySQLdb()
 
-# BASE_DIR = /opt
+# BASE_DIR = /opt/app
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # appをapps配下にまとめるようにする
@@ -130,7 +130,7 @@ USE_TZ = True
 # 静的ファイルを配信するためのURLを定義,https://hostname/static/で配信
 STATIC_URL = '/static/'
 # プロジェクトの静的ファイルを探す場所を定義
-STATICFILES_DIRS = [BASE_DIR, 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static',]
 STATIC_ROOT = '/var/www/html/static'
 # 本番環境の場合
 if DEBUG == False:

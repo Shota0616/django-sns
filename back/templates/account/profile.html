@@ -42,6 +42,20 @@
     </div>
 </div>
 
+{% if current_user.id != user_data.id and current_user.id in follower_list %}
+<div class="button mx-auto">
+    <button class="btn btn-lg btn-warning btn-block follow-button follow-btn" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ current_user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+        フォロー
+    </button>
+</div>
+{% elif current_user.id != user_data.id %}
+<div class="button mx-auto">
+    <button class="btn btn-lg btn-warning btn-block follow-button unfollow-btn" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ current_user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+        フォロー解除
+    </button>
+</div>
+{% endif %}
+
 <!-- ユーザーのtweet表示 -->
 {% include "common/tweetcard-a-tag.html" %}
 
