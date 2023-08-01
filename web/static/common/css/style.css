@@ -127,6 +127,24 @@ footer {
     box-shadow: 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.1);
   }
 
+  .common-btn {
+    background-color: teal;
+    color: #fff;
+    transition: all .7s;
+  }
+
+  .common-btn:hover{
+    color: teal;
+    background-color: #fff;
+    border-color: teal;
+  }
+
+  .signupatag,.forgotpass{
+    color: #1266f1;;
+  }
+
+
+
   /* gooleログインボタン */
   .google-login-wrap {
     display: flex;

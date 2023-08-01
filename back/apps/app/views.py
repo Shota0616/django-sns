@@ -228,21 +228,3 @@ def follow_unfollow_user(request):
 
 
 
-    # if request.method == 'POST' and request.is_ajax():
-    #     user_to_follow = User.objects.get(id=pk)
-    #     current_user = request.user
-
-    #     if current_user.is_authenticated:
-    #         if current_user != user_to_follow:
-    #             is_following = Follow.objects.filter(follower=current_user, following=user_to_follow).exists()
-
-    #             if is_following:
-    #                 # アンフォロー
-    #                 Follow.objects.filter(follower=current_user, following=user_to_follow).delete()
-    #                 return JsonResponse({'status': 'unfollowed'})
-    #             else:
-    #                 # フォロー
-    #                 Follow.objects.create(follower=current_user, following=user_to_follow)
-    #                 return JsonResponse({'status': 'followed'})
-
-    # return JsonResponse({'status': 'error'})

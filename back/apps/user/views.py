@@ -49,7 +49,6 @@ class ProfileView(View):
         if request.user.is_authenticated:
             current_user = request.user
             user_liked_tweet = get_user_liked_tweet(request, current_user)
-            context['current_user'] = current_user
             context['is_user_liked_for_tweet'] = user_liked_tweet
         return render(request, 'account/profile.html', context)
 
