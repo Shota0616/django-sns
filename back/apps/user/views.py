@@ -1,9 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseForbidden
 from django.db.models import Q
 
 from allauth.account import views
@@ -20,6 +17,9 @@ class ProfileView(View):
         follow_datas = Follow.objects.filter(Q(to_user=pk) | Q(from_user=pk))
         follower_list_queryset = follow_datas.values_list('from_user', flat=True)
         follower_list = list(follower_list_queryset)
+        # follow, followerの数だけ取得
+        to_user_count = Follow.objects.filter(to_user=pk).count()
+        from_user_count = Follow.objects.filter(from_user=pk).count()
 
         # ページネーション
         items_per_page = 10
@@ -40,6 +40,8 @@ class ProfileView(View):
         context = {
             'user_data': user_data,
             'follow_datas': follow_datas,
+            'to_user_count': to_user_count,
+            'from_user_count': from_user_count,
             'follower_list': follower_list,
             'tweets': page,
             'page': page,

@@ -7,40 +7,32 @@
 
 <div class="card card-profile my-5 mx-auto">
     <div class="card-body">
-        <table class="profile_table mb-4">
-        <tbody>
-            <tr>
-            <th class="header">名前</th>
-                <td class="data">
-                    {{ user_data.nickname }}
-                </td>
-            </tr>
-            <tr>
-            <th class="header">ユーザーID</th>
-                <td class="data">
-                    {{ user_data.userid }}
-                </td>
-            </tr>
-            <tr>
-            <th class="header">自己紹介</th>
-                <td class="data">
-                    {{ user_data.introduction }}
-                </td>
-            </tr>
-            <th class="header">プロフィール画像</th>
-                <td class="data">
-                    <img src="{{ user_data.profile_image.url }}" width="50%" height="100%"/>
-                </td>
-            </tr>
-        </tbody>
-        </table>
-        {% if request.user.id == user_data.id %}
-        <div class="button mx-auto">
-            <a class="btn btn-lg common-btn btn-block" href="{% url 'profile_edit' %}">編集する</a>
+        <div class="profile-top">
+            <div class="profile-image-aaa">
+                <img class="profile-img" src="{{ user_data.profile_image.url }}"/>
+            </div>
+            <div>
+                <span class="nickname">{{ user_data.nickname }}</span>
+                <span class="userid">@{{ user_data.userid }}</span>
+            </div>
+            {% if request.user.id == user_data.id %}
+            <div class="button profile-edit-btn">
+                <a class="btn btn-sm common-btn btn-block" href="{% url 'profile_edit' %}">編集</a>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+        <div class="profile-mid">
+            <div>
+                {{ user_data.introduction }}
+            </div>
+        </div>
+        <div class="profile-btm">
+            <a class="to-user-aaa" href=""><span class="to-user-span">{{ to_user_count }}</span>フォロー</a>
+            <a class="from-user-aaa" href=""><span class="from-user-span">{{ from_user_count }}</span>フォロワー</a>
+        </div>
     </div>
 </div>
+
 
 <!-- ログイン中のユーザーのプロフィールでは表示しない。 -->
 {% if request.user.id != user_data.id %}

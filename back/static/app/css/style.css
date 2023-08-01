@@ -146,6 +146,57 @@ a.tweet-edit:hover {
     color: darkgray;
 }
 
+.profile-top {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.profile-image-aaa {
+    max-width: 100px;
+    min-width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.profile-img {
+    max-width: 100px;
+    width: 100%;
+}
+
+.profile-edit-btn {
+    margin-left: auto;
+    max-width: 60px;
+}
+
+.nickname {
+    display: block;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.userid {
+    display: block;
+}
+
+.profile-mid {
+    margin: 13px 0 10px 10px;
+}
+
+.to-user-aaa {
+    margin-right: 7px;
+}
+
+.to-user-span, .from-user-span {
+    font-weight: bold;
+}
+
+.to-user-aaa:hover, .from-user-aaa:hover {
+    color: black;
+    text-decoration: underline;
+}
+
 @media (max-width: 576px) {
     .profile_table .header {
         width: 120px;
@@ -158,5 +209,13 @@ a.tweet-edit:hover {
 
     .tweet-card .card-body {
         padding: 2rem 0.5rem 1rem 0.5rem;
+    }
+
+    .nickname {
+        font-size: 17px;
+    }
+
+    .profile-image-aaa {
+        max-width: 65px;
     }
   }
