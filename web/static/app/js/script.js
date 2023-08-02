@@ -116,9 +116,13 @@ function followButtonEvent(button) {
             return response.json();
         }).then(response => {
             if (response.method === 'create') {
-                document.querySelector('.follow-button').textContent = "フォロー解除";
+                button.textContent = "フォロー解除";
+                button.classList.remove('follow-btn-off');
+                button.classList.add('follow-btn-on');
             } else {
-                document.querySelector('.follow-button').textContent = "フォロー";
+                button.textContent = "フォロー";
+                button.classList.add('follow-btn-off');
+                button.classList.remove('follow-btn-on');
             }
         }).catch(error => {
             console.log(error);

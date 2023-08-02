@@ -130,7 +130,7 @@ footer {
   .common-btn {
     background-color: teal;
     color: #fff;
-    transition: all .7s;
+    transition: all .4s;
   }
 
   .common-btn:hover{
@@ -139,8 +139,46 @@ footer {
     border-color: teal;
   }
 
+  .follow-btn-on {
+    background-color: teal;
+    color: #fff;
+    transition: all .7s;
+  }
+
+  .follow-btn-on:hover {
+    color: teal;
+    background-color: #fff;
+    border-color: teal;
+  }
+
+  .follow-btn-off {
+    background-color: #fff;
+    color: teal;
+    transition: all .7s;
+  }
+
+  .follow-btn-off:hover {
+    background-color: teal;
+    color: #fff;
+  }
+
   .signupatag,.forgotpass{
     color: #1266f1;;
+  }
+
+  .navbar-green {
+    background-color:teal;
+    color: #fff;
+    transition: all .7s;
+  }
+
+  .nav-green {
+    color: #fff;
+  }
+
+  .nav-green:hover {
+    color: #fff;
+    opacity: 0.5;
   }
 
 

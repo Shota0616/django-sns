@@ -1,0 +1,102 @@
+{% extends "common/base.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block content %}
+
+<nav class="follow-nav">
+    <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+        フォロー
+        </button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+        フォロワー
+        </button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <!-- フォロー -->
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        {% for follow in follow_to_user %}
+        <a href="{% url 'profile' follow.to_user.id %}" class="card follow-card-profile mx-auto">
+            <div class="card-body">
+                <div class="follow-profile-top">
+                    <div class="follow-profile-image-aaa">
+                        <img class="follow-profile-img" src="{{ follow.to_user.profile_image.url }}"/>
+                    </div>
+                    <div class="follow-profile-bbb">
+                        <span class="follow-nickname">{{ follow.to_user.nickname }}</span>
+                        <span class="follow-userid">@{{ follow.to_user.userid }}</span>
+                    </div>
+                    <!-- ログインしていない場合は表示しない -->
+                    {% if user.is_authenticated %}
+                        <!--  -->
+                        {% if request.user.is_anonymous %}
+                        <div class="button ms-auto follow-btn">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                                フォロー
+                            </button>
+                        </div>
+                        {% elif request.user.id in follower_list %}
+                        <div class="button ms-auto follow-btn">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                                フォロー解除
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="button ms-auto follow-btn">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                                フォロー
+                            </button>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <!-- フォロワー -->
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        {% for follow in follow_from_user %}
+        <a href="{% url 'profile' follow.from_user.id %}" class="card follow-card-profile mx-auto">
+            <div class="card-body">
+                <div class="follow-profile-top">
+                    <div class="follow-profile-image-aaa">
+                        <img class="follow-profile-img" src="{{ follow.from_user.profile_image.url }}"/>
+                    </div>
+                    <div class="follow-profile-bbb">
+                        <span class="follow-nickname">{{ follow.from_user.nickname }}</span>
+                        <span class="follow-userid">@{{ follow.from_user.userid }}</span>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <!--  -->
+                    {% if request.user.is_anonymous %}
+                    <div class="button ms-auto follow-btn">
+                        <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.from_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            フォロー
+                        </button>
+                    </div>
+                    {% elif request.user.id in follower_list %}
+                    <div class="button ms-auto follow-btn">
+                        <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.from_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            フォロー解除
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="button ms-auto follow-btn">
+                        <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.from_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            フォロー
+                        </button>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

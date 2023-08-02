@@ -37,15 +37,15 @@ class Comment(models.Model):
         db_table = "app_comment"
 
 
-# Retweetモデル
-class Retweet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='retweet_user')
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='retweet_tweet')
-    retweeted_at = models.DateTimeField(auto_now_add=True)
+# # Retweetモデル
+# class Retweet(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='retweet_user')
+#     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='retweet_tweet')
+#     retweeted_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('user', 'tweet')
-        db_table = "app_retweet"
+#     class Meta:
+#         unique_together = ('user', 'tweet')
+#         db_table = "app_retweet"
 
 
 # Followモデル

@@ -197,6 +197,71 @@ a.tweet-edit:hover {
     text-decoration: underline;
 }
 
+
+.follow-nav {
+    margin: 30px auto 0 auto;
+    display: table;
+    table-layout: fixed;
+    float:none;
+}
+
+.follow-card-profile {
+    color: #000;
+    max-width: 700px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transition: 0.3s;
+}
+
+.follow-card-profile:hover {
+    color: #000;
+    box-shadow: 0 0.2rem 0.5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.follow-profile-top {
+    display: flex;
+    width: 100%;
+}
+
+.follow-profile-image-aaa {
+    max-width: 50px;
+    min-width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.follow-profile-bbb {
+    line-height: 120%;
+}
+
+.follow-profile-bbb:hover {
+    text-decoration: underline;
+    color: #000;
+}
+
+.follow-profile-img {
+    max-width: 50px;
+    width: 100%;
+}
+
+.follow-nickname {
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.follow-userid {
+    font-size: 13px;
+    color: darkgray;
+}
+
+.follow-btn {
+    width: 110px;
+    margin: auto 0;
+}
+
 @media (max-width: 576px) {
     .profile_table .header {
         width: 120px;

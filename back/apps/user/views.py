@@ -13,6 +13,7 @@ from app.utils import get_tweet_likes, get_user_liked_tweet, get_tweet_comment
 class ProfileView(View):
     def get(self, request, pk, *args, **kwargs):
         user_data = User.objects.get(id=pk)
+        tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').filter(user=pk).order_by('created_at').reverse()
         # follow, follower情報を取得
         follow_datas = Follow.objects.filter(Q(to_user=pk) | Q(from_user=pk))
         follower_list_queryset = follow_datas.values_list('from_user', flat=True)
@@ -21,33 +22,34 @@ class ProfileView(View):
         to_user_count = Follow.objects.filter(to_user=pk).count()
         from_user_count = Follow.objects.filter(from_user=pk).count()
 
-        # ページネーション
-        items_per_page = 10
-        page_number = request.GET.get('page', 1)
-        # tweets = Tweet.objects.select_related('user').filter(user=pk).order_by('-created_at')
-        tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').filter(user=pk).order_by('created_at').reverse()
-        paginator = Paginator(tweets, items_per_page)
-        # tweetごとのいいね数をdictで取得
-        tweet_likes = get_tweet_likes(tweets)
-        # tweetごとのコメント数をdictで取得
-        tweet_comment = get_tweet_comment(tweets)
-
-        try:
-            page = paginator.page(page_number)
-        except (EmptyPage, PageNotAnInteger):
-            page = paginator.page(1)
-
         context = {
             'user_data': user_data,
             'follow_datas': follow_datas,
             'to_user_count': to_user_count,
             'from_user_count': from_user_count,
             'follower_list': follower_list,
-            'tweets': page,
-            'page': page,
-            'tweet_likes': tweet_likes,
-            'tweet_comment': tweet_comment,
         }
+
+        # ページネーション
+        items_per_page = 10
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(tweets, items_per_page)
+        try:
+            page = paginator.page(page_number)
+        except (EmptyPage, PageNotAnInteger):
+            page = paginator.page(1)
+        # tweetが存在するときはtweetの情報も取得
+        if tweets.exists():
+            # tweetごとのいいね数をdictで取得
+            tweet_likes = get_tweet_likes(tweets)
+            # tweetごとのコメント数をdictで取得
+            tweet_comment = get_tweet_comment(tweets)
+            context['tweet_likes'] = tweet_likes
+            context['tweet_comment'] = tweet_comment
+            context['tweets'] = page
+            context['page'] = page
+
+        # ユーザがログインしていたらログインしているユーザのいいねしている投稿を取得
         if request.user.is_authenticated:
             current_user = request.user
             user_liked_tweet = get_user_liked_tweet(request, current_user)

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 from app.models import Tweet, Comment, Like, Follow
 from user.models import User
@@ -180,6 +181,24 @@ class CommentDeleteView(View):
             return redirect('profile', pk=request.user.pk)  # Tweetの一覧ページにリダイレクト
 
 
+# フォロー情報の取得
+class GetFollowView(View):
+    def get(self, request, pk, *args, **kwargs):
+        # follow, follower情報を取得
+        follow_datas = Follow.objects.filter(Q(to_user=pk) | Q(from_user=pk))
+        follower_list_queryset = follow_datas.values_list('from_user', flat=True)
+        follower_list = list(follower_list_queryset)
+
+        follow_to_user = Follow.objects.select_related('from_user').filter(from_user=pk)
+        follow_from_user = Follow.objects.select_related('to_user').filter(to_user=pk)
+        context = {
+            'follow_to_user': follow_to_user,
+            'follow_from_user': follow_from_user,
+            'follower_list': follower_list,
+        }
+        return render(request, 'app/follow.html', context)
+
+
 # tweetのいいね用関数
 def like_tweet(request):
     if request.user.is_authenticated:
@@ -206,7 +225,7 @@ def like_tweet(request):
     else:
         return render(request, 'account/login',)
 
-
+# ユーザのフォローとフォロー解除するための関数
 def follow_unfollow_user(request):
     if request.user.is_authenticated:
         to_user_id = int(request.POST.get('to_user_id'))
@@ -225,6 +244,3 @@ def follow_unfollow_user(request):
     else:
         # pass
         return render(request, 'account/login',)
-
-
-
