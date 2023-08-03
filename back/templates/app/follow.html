@@ -5,12 +5,22 @@
 
 {% block content %}
 
-<nav class="follow-nav">
+<!-- <nav class="follow-nav">
     <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
         フォロー
         </button>
         <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+        フォロワー
+        </button>
+    </div>
+</nav> -->
+<nav class="follow-nav">
+    <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
+        <button class="nav-link to-user-aaa active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+        フォロー
+        </button>
+        <button class="nav-link from-user-aaa" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
         フォロワー
         </button>
     </div>
@@ -98,5 +108,6 @@
         {% endfor %}
     </div>
 </div>
+
 
 {% endblock %}

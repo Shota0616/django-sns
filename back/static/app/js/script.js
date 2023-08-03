@@ -130,6 +130,43 @@ function followButtonEvent(button) {
     });
 }
 
+// followタブの切り替え
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    const followTabLink = document.querySelector('.to-user-aaa');
+    const followerTabLink = document.querySelector('.from-user-aaa');
+
+    // URLに'tab'パラメータがない場合、または'tab'パラメータが'follow'の場合はデフォルトで'フォロー'タブを選択
+    if (!activeTab || activeTab === 'follow') {
+        followTabLink.classList.add('active');
+        followerTabLink.classList.remove('active');
+    } else if (activeTab === 'follower') {
+        followTabLink.classList.remove('active');
+        followerTabLink.classList.add('active');
+    }
+
+    // タブをクリックしたときにURLを更新し、選択したタブを反映する関数
+    function updateURL(tab) {
+        const newURL = new URL(window.location.href);
+        newURL.searchParams.set('tab', tab);
+        window.history.pushState({}, '', newURL);
+    }
+
+    // タブリンクにイベントリスナーを追加してURLを更新し、タブを切り替える
+    followTabLink.addEventListener('click', function () {
+        followTabLink.classList.add('active');
+        followerTabLink.classList.remove('active');
+        updateURL('follow');
+    });
+
+    followerTabLink.addEventListener('click', function () {
+        followTabLink.classList.remove('active');
+        followerTabLink.classList.add('active');
+        updateURL('follower');
+    });
+});
+
 // 最初にドキュメントが読み込まれたら実行する
 window.addEventListener('DOMContentLoaded', function(){
     // likeボタンのイベントリスナーを登録

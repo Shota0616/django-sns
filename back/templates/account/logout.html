@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<div class="card card-profile my-5 mx-auto">
+<div class="card card-profile my-4 mx-auto">
   <div class="card-body">
     <h5 class="card-title text-center">ログアウトしますか？</h5>
     <form method="post" action="{% url 'account_logout' %}">
@@ -16,7 +16,7 @@
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
       {% endif %}
       <div class="button mx-auto">
-        <button class="btn btn-lg common-btn btn-block" type="submit">ログアウトする</button>
+        <button class="btn btn-lg common-btn btn-block" type="submit">ログアウト</button>
       </div>
     </form>
   </div>

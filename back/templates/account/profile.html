@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="card card-profile my-5 mx-auto">
+<div class="card card-profile my-4 mx-auto">
     <div class="card-body">
         <div class="profile-top">
             <div class="profile-image-aaa">
@@ -27,8 +27,8 @@
             </div>
         </div>
         <div class="profile-btm">
-            <a class="to-user-aaa" href='{% url "get_follow" user_data.id %}'><span class="to-user-span">{{ from_user_count }}</span>フォロー</a>
-            <a class="from-user-aaa" href='{% url "get_follow" user_data.id %}'><span class="from-user-span">{{ to_user_count }}</span>フォロワー</a>
+            <a class="to-user-aaa" href='{% url "get_follow" user_data.id %}?tab=follow'><span class="to-user-span">{{ from_user_count }}</span>フォロー</a>
+            <a class="from-user-aaa" href='{% url "get_follow" user_data.id %}?tab=follower'><span class="from-user-span">{{ to_user_count }}</span>フォロワー</a>
         </div>
     </div>
 </div>
