@@ -17,17 +17,17 @@
 </nav> -->
 <nav class="follow-nav">
     <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
-        <button class="nav-link to-user-aaa active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+        <button class="nav-link to-user-aaa" data-tab="follow">
         フォロー
         </button>
-        <button class="nav-link from-user-aaa" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+        <button class="nav-link from-user-aaa" data-tab="follower">
         フォロワー
         </button>
     </div>
 </nav>
-<div class="tab-content" id="nav-tabContent">
+<div class="tab-content">
     <!-- フォロー -->
-    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="tab-pane follow follow-content">
         {% for follow in follow_to_user %}
         <a href="{% url 'profile' follow.to_user.id %}" class="card follow-card-profile mx-auto">
             <div class="card-body">
@@ -44,19 +44,19 @@
                         <!--  -->
                         {% if request.user.is_anonymous %}
                         <div class="button ms-auto follow-btn">
-                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
                                 フォロー
                             </button>
                         </div>
                         {% elif request.user.id in follower_list %}
                         <div class="button ms-auto follow-btn">
-                            <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
                                 フォロー解除
                             </button>
                         </div>
                         {% else %}
                         <div class="button ms-auto follow-btn">
-                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}' onclick="toggleFollow(this)">
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
                                 フォロー
                             </button>
                         </div>
@@ -68,7 +68,7 @@
         {% endfor %}
     </div>
     <!-- フォロワー -->
-    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="tab-pane follower follower-content">
         {% for follow in follow_from_user %}
         <a href="{% url 'profile' follow.from_user.id %}" class="card follow-card-profile mx-auto">
             <div class="card-body">

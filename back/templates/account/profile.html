@@ -39,19 +39,19 @@
     <!--  -->
     {% if request.user.is_anonymous %}
     <div class="button mx-auto">
-        <button class="btn btn-lg btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+        <button class="btn btn-lg btn-block follow-button follow-button-p follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
             フォロー
         </button>
     </div>
     {% elif request.user.id in follower_list %}
     <div class="button mx-auto">
-        <button class="btn btn-lg btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+        <button class="btn btn-lg btn-block follow-button follow-button-p follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
             フォロー解除
         </button>
     </div>
     {% else %}
     <div class="button mx-auto">
-        <button class="btn btn-lg btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+        <button class="btn btn-lg btn-block follow-button follow-button-p follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user_data.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
             フォロー
         </button>
     </div>

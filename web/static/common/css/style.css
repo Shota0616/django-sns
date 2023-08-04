@@ -34,7 +34,7 @@ footer {
     width: 150px;
 }
 
-.btn {
+.common-btn {
     font-size: 80%;
     width: 100%;
     border-radius: 5rem;
@@ -142,7 +142,7 @@ footer {
   .follow-btn-on {
     background-color: teal;
     color: #fff;
-    transition: all .7s;
+    transition: all .4s;
   }
 
   .follow-btn-on:hover {
@@ -154,7 +154,7 @@ footer {
   .follow-btn-off {
     background-color: #fff;
     color: teal;
-    transition: all .7s;
+    transition: all .4s;
   }
 
   .follow-btn-off:hover {
@@ -169,7 +169,7 @@ footer {
   .navbar-green {
     background-color:teal;
     color: #fff;
-    transition: all .7s;
+    transition: all .4s;
   }
 
   .nav-green {
@@ -180,6 +180,59 @@ footer {
     color: #fff;
     opacity: 0.5;
   }
+
+  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: black;
+    border-color: black;
+}
+
+  .navbar-custom {
+      background-color: teal;
+  }
+
+  .container-fluid{
+    max-width: 800px;
+  }
+
+  .search-form-006 {
+    display: flex;
+    height: 30px;
+    align-items: center;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.search-form-006 input {
+    width: 250px;
+    height: 30px;
+    padding: 5px 15px;
+    border: none;
+    box-sizing: border-box;
+    background-color: #e6edf3;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-form-006 input::placeholder {
+    color: #767d83;
+}
+
+.search-form-006 button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 30px;
+    border-radius: 0 25px 25px 0;
+    border: none;
+    background-color: #204B53;
+    cursor: pointer;
+}
+
+.fa-magnifying-glass {
+  color: #fff;
+}
+
 
 
 
