@@ -11,5 +11,6 @@ urlpatterns = [
     path('comment/delete/<int:pk>', views.CommentDeleteView.as_view(), name='comment_delete'),
     path('like_tweet', views.like_tweet, name='like_tweet'),
     path('follow', views.follow_unfollow_user, name='user_follow'),
-    path('get_follow/<int:pk>', views.GetFollowView.as_view(), name='get_follow'),
+    path('following/<int:pk>', views.GetFollowView.as_view(), name='following'),
+    path('followers/<int:pk>', views.GetFollowerView.as_view(), name='followers'),
 ]

@@ -1,0 +1,57 @@
+{% extends "common/base.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block content %}
+
+<nav class="follow-nav">
+    <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
+        <a href='{% url "following" pk %}'>
+            <button class="nav-link to-user-aaa" data-tab="follow">
+                フォロー
+            </button>
+        </a>
+        <a href='{% url "followers" pk %}'>
+            <button class="nav-link from-user-aaa active" data-tab="follower">
+                フォロワー
+            </button>
+        </a>
+    </div>
+</nav>
+<div class="tab-content">
+    <!-- フォロー -->
+    <div class="tab-pane follow follow-content active">
+        {% for follow in user_followers_list %}
+        <a href="{% url 'profile' follow.from_user.id %}" class="card follow-card-profile mx-auto">
+            <div class="card-body">
+                <div class="follow-profile-top">
+                    <div class="follow-profile-image-aaa">
+                        <img class="follow-profile-img" src="{{ follow.from_user.profile_image.url }}"/>
+                    </div>
+                    <div class="follow-profile-bbb">
+                        <span class="follow-nickname">{{ follow.from_user.nickname }}</span>
+                        <span class="follow-userid">@{{ follow.from_user.userid }}</span>
+                    </div>
+                    {% if request.user.id != follow.from_user.id %}
+                        <div class="button ms-auto follow-btn">
+                            {% if follow.from_user.id in follower_list %}
+                            <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.from_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+                                フォロー解除
+                            </button>
+                            {% else %}
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.from_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+                                フォロー
+                            </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

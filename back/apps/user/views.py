@@ -15,8 +15,9 @@ class ProfileView(View):
         user_data = User.objects.get(id=pk)
         tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').filter(user=pk).order_by('created_at').reverse()
         # follow, follower情報を取得
-        follow_datas = Follow.objects.filter(Q(to_user=pk) | Q(from_user=pk))
-        follower_list_queryset = follow_datas.values_list('from_user', flat=True)
+        follow_datas = Follow.objects.filter(from_user=request.user)
+        follower_list_queryset = follow_datas.values_list('to_user', flat=True)
+        # ログイン中のユーザーがフォローしているユーザ
         follower_list = list(follower_list_queryset)
         # follow, followerの数だけ取得
         to_user_count = Follow.objects.filter(to_user=pk).count()
