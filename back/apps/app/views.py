@@ -184,70 +184,39 @@ class CommentDeleteView(View):
 # フォロー情報の取得
 class GetFollowView(View):
     def get(self, request, pk, *args, **kwargs):
-        # follow情報を取得
-        follow_datas = Follow.objects.filter(from_user=request.user)
-        follower_list_queryset = follow_datas.values_list('to_user', flat=True)
-        # ログイン中のユーザーがフォローしているユーザ
-        follower_list = list(follower_list_queryset)
-
         # ユーザのフォローリスト
         user_following_list = Follow.objects.select_related('to_user').filter(from_user=pk)
         context = {
             'user_following_list': user_following_list,
-            'follower_list': follower_list,
             'pk': pk,
         }
+
+        if request.user.is_authenticated:
+            # follow情報を取得
+            follow_datas = Follow.objects.filter(from_user=request.user)
+            follower_list_queryset = follow_datas.values_list('to_user', flat=True)
+            # ログイン中のユーザーがフォローしているユーザ
+            follower_list = list(follower_list_queryset)
+            context['follower_list'] = follower_list
         return render(request, 'app/follow.html', context)
 
 
 class GetFollowerView(View):
     def get(self, request, pk, *args, **kwargs):
-        # follower情報を取得
-        follow_datas = Follow.objects.filter(from_user=request.user)
-        follower_list_queryset = follow_datas.values_list('to_user', flat=True)
-        # ログイン中のユーザーがフォローしているユーザ
-        follower_list = list(follower_list_queryset)
-
         user_followers_list = Follow.objects.select_related('from_user').filter(to_user=pk)
         context = {
             'user_followers_list': user_followers_list,
-            'follower_list': follower_list,
             'pk': pk,
         }
+
+        if request.user.is_authenticated:
+            # follow情報を取得
+            follow_datas = Follow.objects.filter(from_user=request.user)
+            follower_list_queryset = follow_datas.values_list('to_user', flat=True)
+            # ログイン中のユーザーがフォローしているユーザ
+            follower_list = list(follower_list_queryset)
+            context['follower_list'] = follower_list
         return render(request, 'app/follower.html', context)
-
-
-# class FollowUnfollowView(View):
-#     def get(self, request, pk, *args, **kwargs):
-#         if request.user.is_authenticated:
-#             # ログイン中のユーザー取得
-#             current_user = request.user
-#             # ログイン先のユーザー取得
-#             to_user = pk
-#             # followingとfollowerの組み合わせを取得
-#             is_following = Follow.objects.filter(from_user=current_user, to_user=to_user)
-
-#             # もし組み合わせが存在したら削除
-#             if is_following.exists():
-#                 is_following.delete()
-#             # もし組み合わせが存在しなかったら追加
-#             else:
-#                 from_user_instance = User.objects.get(id=current_user)
-#                 to_user_instance = User.objects.get(id=to_user)
-#                 is_following.create(from_user=from_user_instance, to_user=to_user_instance)
-
-#             # 更新されたログインユーザーのフォローデータを取得
-#             follow_datas = Follow.objects.filter(from_user=current_user)
-#             follower_list = list(follow_datas.values_list('to_user', flat=True))
-
-#             context = {
-#                 'follower_list': follower_list,
-#             }
-#             return render(request, 'app/follower.html', context)
-#         # ログイン中のユーザーじゃない場合はログインページに遷移
-#         else:
-#             # pass
-#             return render(request, 'account/login',)
 
 # ユーザのフォローとフォロー解除するための関数
 def follow_unfollow_user(request):
@@ -281,21 +250,6 @@ def follow_unfollow_user(request):
     else:
         # pass
         return render(request, 'account/login',)
-
-
-                            # <object><a href="{% url 'follow' follow.to_user.id %}">
-                            #     <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
-                            #         フォロー解除
-                            #     </button>
-                            # </a></object>
-                            # {% else %}
-                            # <object><a href="{% url 'follow' follow.to_user.id %}">
-                            #     <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
-                            #         フォロー
-                            #     </button>
-                            # </a></object>
-
-
 
 
 # tweetのいいね用関数
