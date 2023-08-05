@@ -16,7 +16,12 @@ class IndexView(View):
         items_per_page = 10  # 1ページに表示するアイテム数
         # GETパラメータからページ番号を取得し、デフォルトは1ページ目とします
         page_number = request.GET.get('page', 1)
-        tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()
+        if request.user.is_authenticated:
+            # ログイン中のユーザーがフォローしているユーザーを取得
+            following_user_ids = Follow.objects.filter(from_user_id=request.user).values_list('to_user_id', flat=True)
+            tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').filter(Q(user_id__in=following_user_ids) | Q(user_id=request.user)).order_by('created_at')
+        else:
+            tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()[:100] 
         paginator = Paginator(tweets, items_per_page)
         # tweetごとのいいね数をdictで取得
         tweet_likes = get_tweet_likes(tweets)
@@ -46,6 +51,47 @@ class IndexView(View):
             context['current_user'] = current_user
             context['is_user_liked_for_tweet'] = user_liked_tweet
         return render(request, 'app/index.html', context)
+
+
+# 検索
+class SearchView(View):
+    def get(self, request, *args, **kwargs):
+        search_items = request.GET.get('search-items', '')
+        keywords = search_items.split()
+        q_objects = Q()
+        for keyword in keywords:
+            q_objects |= Q(text__icontains=keyword)
+
+        tweets = Tweet.objects.filter(q_objects).select_related('user').prefetch_related('comments_tweet').order_by('-created_at')
+
+        tweet_likes = get_tweet_likes(tweets)
+        tweet_comment = get_tweet_comment(tweets)
+
+        paginator = Paginator(tweets, 10)
+        page_number = request.GET.get('page', 1)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+
+        context = {
+            'tweets': page,
+            'page': page,
+            'search_items': keywords,
+            'tweet_likes': tweet_likes,
+            'tweet_comment': tweet_comment,
+        }
+
+        if request.user.is_authenticated:
+            current_user = request.user
+            user_liked_tweet = get_user_liked_tweet(request, current_user)
+            context['current_user'] = current_user
+            context['is_user_liked_for_tweet'] = user_liked_tweet
+
+        return render(request, 'app/search_results.html', context)
+
 
 
 # Tweetを作成
@@ -187,9 +233,20 @@ class GetFollowView(View):
         # ユーザのフォローリスト
         user_following_list = Follow.objects.select_related('to_user').filter(from_user=pk)
         context = {
-            'user_following_list': user_following_list,
             'pk': pk,
         }
+        # ページネーション
+        items_per_page = 10
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(user_following_list, items_per_page)
+        try:
+            page = paginator.page(page_number)
+        except (EmptyPage, PageNotAnInteger):
+            page = paginator.page(1)
+
+        if user_following_list.exists():
+            context['user_following_list'] = page
+            context['page'] = page
 
         if request.user.is_authenticated:
             # follow情報を取得
@@ -205,9 +262,21 @@ class GetFollowerView(View):
     def get(self, request, pk, *args, **kwargs):
         user_followers_list = Follow.objects.select_related('from_user').filter(to_user=pk)
         context = {
-            'user_followers_list': user_followers_list,
             'pk': pk,
         }
+
+        # ページネーション
+        items_per_page = 10
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(user_followers_list, items_per_page)
+        try:
+            page = paginator.page(page_number)
+        except (EmptyPage, PageNotAnInteger):
+            page = paginator.page(1)
+
+        if user_followers_list.exists():
+            context['user_followers_list'] = page
+            context['page'] = page
 
         if request.user.is_authenticated:
             # follow情報を取得

@@ -270,6 +270,18 @@ a.tweet-edit:hover {
     border-radius: 30px;
 }
 
+.search-items {
+    max-width: 700px;
+}
+
+.dadge {
+    --mdb-bg-opacity: 1;
+}
+
+.dg-gray {
+    background-color: #6c757d!;
+}
+
 
 
 
