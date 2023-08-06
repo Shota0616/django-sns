@@ -20,8 +20,10 @@ class IndexView(View):
             # ログイン中のユーザーがフォローしているユーザーを取得
             following_user_ids = Follow.objects.filter(from_user_id=request.user).values_list('to_user_id', flat=True)
             tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').filter(Q(user_id__in=following_user_ids) | Q(user_id=request.user)).order_by('created_at')
+            if not tweets.exists():
+                tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()[:100]
         else:
-            tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()[:100] 
+            tweets = Tweet.objects.select_related('user').prefetch_related('comments_tweet').order_by('created_at').reverse()[:100]
         paginator = Paginator(tweets, items_per_page)
         # tweetごとのいいね数をdictで取得
         tweet_likes = get_tweet_likes(tweets)
@@ -80,6 +82,7 @@ class SearchView(View):
             'tweets': page,
             'page': page,
             'search_items': keywords,
+            'search_items_original': search_items,
             'tweet_likes': tweet_likes,
             'tweet_comment': tweet_comment,
         }
@@ -92,7 +95,43 @@ class SearchView(View):
 
         return render(request, 'app/search_results.html', context)
 
+class UserSearchView(View):
+    def get(self, request, *args, **kwargs):
+        search_items = request.GET.get('search-items', '')
+        # スペースで区切って複数のキーワードを取得
+        keywords = search_items.split()
+        # Qオブジェクトを使用して複数のクエリを組み合わせる
+        q_objects = Q()
+        for keyword in keywords:
+            q_objects |= Q(userid__icontains=keyword) | Q(nickname__icontains=keyword)
 
+        users = User.objects.filter(q_objects)
+
+        paginator = Paginator(users, 10)
+        page_number = request.GET.get('page', 1)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+
+        context = {
+            'users': page,
+            'page': page,
+            'search_items': keywords,
+            'search_items_original': search_items,
+        }
+
+        if request.user.is_authenticated:
+            # follow情報を取得
+            follow_datas = Follow.objects.filter(from_user=request.user)
+            follower_list_queryset = follow_datas.values_list('to_user', flat=True)
+            # ログイン中のユーザーがフォローしているユーザ
+            follower_list = list(follower_list_queryset)
+            context['follower_list'] = follower_list
+
+        return render(request, 'app/user_search_results.html', context)
 
 # Tweetを作成
 class TweetCreateView(View):
@@ -190,23 +229,23 @@ class TweetDeleteView(View):
 class CommentEditView(View):
     def get(self, request, pk, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=pk)
-        form = CommentForm(request.POST, instance=comment)
+        form = CommentForm(instance=comment)
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != comment.user:
-            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
-        return render(request, 'app/tweet_edit.html', {'form': form})
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/comment_edit.html', {'form': form})
 
     def post(self, request, pk, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=pk)
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != comment.user:
-            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 一致しなければ、詳細ページにリダイレクト
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            return redirect('tweet_detail', pk=comment.pk)  # 編集後のTweetの詳細ページにリダイレクト
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 編集後のTweetの詳細ページにリダイレクト
         else:
-            return render(request, 'app/tweet_edit.html', {'form': form})
+            return render(request, 'app/comment_edit.html', {'form': form})
 
 
 # Comment削除
@@ -215,16 +254,16 @@ class CommentDeleteView(View):
         comment = Comment.objects.select_related('user').get(id=pk)
         # ログインしているユーザーがツイートの作成者と一致するか確認
         if request.user != comment.user:
-            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
-        return render(request, 'app/tweet_delete.html', {'tweet': comment})
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 一致しなければ、詳細ページにリダイレクト
+        return render(request, 'app/comment_delete.html', {'tweet': comment})
 
     def post(self, request, pk, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=pk) # Add this line
         if request.user != comment.user:
-            return redirect('tweet_detail', pk=comment.pk)  # 一致しなければ、詳細ページにリダイレクト
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 一致しなければ、詳細ページにリダイレクト
         else:
             comment.delete()
-            return redirect('profile', pk=request.user.pk)  # Tweetの一覧ページにリダイレクト
+            return redirect('tweet_detail', pk=comment.tweet.id)  # 詳細ページにリダイレクト
 
 
 # フォロー情報の取得

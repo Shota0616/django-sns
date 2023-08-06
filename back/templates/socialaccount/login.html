@@ -1,0 +1,18 @@
+{% extends "common/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<div class="card card-profile my-4 mx-auto">
+    <div class="card-body">
+        <h5 class="card-title text-center"><i class="fa-brands fa-google"></i>でログインしますか？</h5>
+        <form method="post" class="google-login-continue">
+            {% csrf_token %}
+            <button class="btn btn-lg common-btn btn-block mx-auto" type="submit">{% trans "Continue" %}</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

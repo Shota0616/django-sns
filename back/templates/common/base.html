@@ -57,8 +57,9 @@
             {% endif %}
           </ul>
           <form method="GET" action="{% url 'search' %}" class="search-form-006">
+            {% csrf_token %}
             <label>
-                <input type="text" placeholder="キーワードを入力" name="search-items">
+                <input type="text" placeholder="キーワードを入力" name="search-items" value="{{ search_items_original }}">
             </label>
             <button type="submit" aria-label="検索"><i class="fa-solid fa-magnifying-glass"></i></button>
           </form>

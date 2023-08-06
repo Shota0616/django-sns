@@ -42,7 +42,7 @@
       <a class="signupatag" href="{{ signup_url }}">新規登録はこちら</a><br>
       <a class="forgotpass button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
       <div class="button mx-auto">
-        <button class="btn btn-lg common-btn btn-block" type="submit">{% trans "Sign In" %}</button>
+        <button class="btn btn-lg common-btn btn-block login-btn" type="submit">{% trans "Sign In" %}</button>
       </div>
       <div class="google-login-wrap mx-auto">
         <a href="{% provider_login_url 'google' %}" class="google-login-btn">

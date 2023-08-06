@@ -7,7 +7,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-tweet" aria-labelledby="dropdownMenuButton">
             <li><object><a class="dropdown-item tweet-delete-btn" href="{% url 'comment_delete' comment.id %}">削除</a></object></li>
-            <li><object><a class="dropdown-item" href="{% url 'comment_delete' comment.id %}">編集</a></object></li>
+            <li><object><a class="dropdown-item" href="{% url 'comment_edit' comment.id %}">編集</a></object></li>
         </ul>
     </div>
 </div>

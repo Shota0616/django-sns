@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import sys
+import environ
 
 import pymysql
 
@@ -10,13 +11,17 @@ pymysql.install_as_MySQLdb()
 # BASE_DIR = /opt/app
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# env読み込み
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # appをapps配下にまとめるようにする
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m8ini@+(#8co(fqw0!-ruwcqn))#b4^5u7n$s^)0xdh8!n0(kn'
+SECRET_KEY = env('SECRET_KEY')
 
 # DEBUGモード,本番環境では、Falseにする
 DEBUG = True
@@ -131,10 +136,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # プロジェクトの静的ファイルを探す場所を定義
 STATICFILES_DIRS = [BASE_DIR / 'static',]
-STATIC_ROOT = '/var/www/html/static'
 # 本番環境の場合
-if DEBUG == False:
-    STATIC_ROOT = '/var/www/html/static'
+STATIC_ROOT = '/var/www/html/static'
 
 
 # 本番環境では、以下指定してwebサーバに静的ファイルを配置する
@@ -157,9 +160,9 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # django-allauth
 SITE_ID = 1
 
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/accounts/login/'
 # ログイン/ログアウト時のリダイレクト先
-ACCOUNT_LOGOUT_REDIRECT_URL = '/account/login/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
 # 認証にemailを使用
@@ -171,8 +174,14 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 # ユーザ登録にメルアド必須にする
 ACCOUNT_EMAIL_REQUIRED = True
-# とりあえずコンソールにメール
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# テスト用
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -195,27 +204,27 @@ ACCOUNT_FORMS = {
 #ACCOUNT_ADAPTER = 'user.adapter.AccountAdapter'
 
 # ソーシャルアカウントログイン
-# SOCIALACCOUNT_PROVIDERS = {
-#     "google": {
-#         # For each OAuth based provider, either add a ``SocialApp``
-#         # (``socialaccount`` app) containing the required client
-#         # credentials, or list them here:
-#         "APP": {
-#             "client_id": "123",
-#             "secret": "456",
-#             "key": ""
-#         },
-#         # These are provider-specific settings that can only be
-#         # listed here:
-#         "SCOPE": [
-#             "profile",
-#             "email",
-#         ],
-#         "AUTH_PARAMS": {
-#             "access_type": "online",
-#         }
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        "APP": {
+            "client_id": env('GOOGLE_CLIENT_ID'),
+            "secret": env('GOOGLE_SECRET'),
+            "key": ""
+        },
+        # These are provider-specific settings that can only be
+        # listed here:
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        }
+    }
+}
 
 
 # logging

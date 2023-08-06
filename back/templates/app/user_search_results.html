@@ -1,0 +1,79 @@
+{% extends "common/base.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="search-items mx-auto my-2">
+    {% for item in search_items %}
+    <span class="badge rounded-pill bg-light text-dark">{{ item }}</span>
+    {% endfor %}
+</div>
+
+
+<nav class="search-results-nav">
+    <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
+        <form method="GET" action="{% url 'search' %}">
+            {% csrf_token %}
+            <input type="hidden" name="search-items" value="{{ search_items_original }}">
+            <button type="submit" class="nav-link to-user-aaa" data-tab="follow">
+                ツイート
+            </button>
+        </form>
+        <form method="GET" action="{% url 'user_search' %}">
+            {% csrf_token %}
+            <input type="hidden" name="search-items" value="{{ search_items_original }}">
+            <button type="submit" class="nav-link from-user-aaa active" data-tab="follower">
+                ユーザー
+            </button>
+        </form>
+    </div>
+</nav>
+<div class="tab-content">
+    <!-- フォロー -->
+    {% if users.has_next %}
+    <div class="tab-pane follow follow-content active" data-next-page="{{ users.next_page_number }}">
+    {% else %}
+    <div class="tab-pane follow follow-content active">
+    {% endif %}
+        {% if users %}
+            {% for user in users %}
+            <a href="{% url 'profile' user.id %}" class="card follow-card-profile mx-auto">
+                <div class="card-body">
+                    <div class="follow-profile-top">
+                        <div class="follow-profile-image-aaa">
+                            <img class="follow-profile-img" src="{{ user.profile_image.url }}"/>
+                        </div>
+                        <div class="follow-profile-bbb">
+                            <span class="follow-nickname">{{ user.nickname }}</span>
+                            <span class="follow-userid">@{{ user.userid }}</span>
+                        </div>
+                        {% if request.user.id != user.id %}
+                        <div class="button ms-auto follow-btn">
+                            {% if user.id in follower_list %}
+                            <button class="btn btn-sm btn-block follow-button follow-btn-on" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+                                フォロー解除
+                            </button>
+                            {% else %}
+                            <button class="btn btn-sm btn-block follow-button follow-btn-off" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+                                フォロー
+                            </button>
+                            <!-- <button class="btn btn-sm btn-block follow-button {% if follow.to_user.id in follower_list %}follow-btn-on{% else %}follow-btn-off{% endif %}" data-follow-user-url='{% url "user_follow" %}' data-to-user-id="{{ follow.to_user.id }}" data-from-user-id="{{ request.user.id }}" data-is-authenticated='{{ user.is_authenticated }}' data-account-login='{% url "account_login" %}'>
+                                {% if follow.to_user.id in follower_list %}フォロー解除{% else %}フォロー{% endif %}
+                            </button> -->
+                            {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="none-tweet mx-auto">検索結果なし。</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

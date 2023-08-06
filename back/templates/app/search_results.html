@@ -6,13 +6,68 @@
 
 {% block content %}
 
-<div class="search-items mx-auto my-3">
+<div class="search-items mx-auto my-2">
     {% for item in search_items %}
     <span class="badge rounded-pill bg-light text-dark">{{ item }}</span>
     {% endfor %}
 </div>
 
-<!-- ユーザーのtweet表示 -->
-{% include "common/tweetcard-a-tag.html" %}
+
+<nav class="search-results-nav">
+    <div class="nav nav-tabs mx-auto" id="nav-tab" role="tablist">
+        <form method="GET" action="{% url 'search' %}">
+            {% csrf_token %}
+            <input type="hidden" name="search-items" value="{{ search_items_original }}">
+            <button type="submit" class="nav-link to-user-aaa active" data-tab="follow">
+                ツイート
+            </button>
+        </form>
+        <form method="GET" action="{% url 'user_search' %}">
+            {% csrf_token %}
+            <input type="hidden" name="search-items" value="{{ search_items_original }}">
+            <button type="submit" class="nav-link from-user-aaa" data-tab="follower">
+                ユーザー
+            </button>
+        </form>
+    </div>
+</nav>
+<div class="tab-content">
+    <!-- ユーザーのtweet表示 -->
+    {% if tweets.has_next %}
+    <div class="tab-pane follow follow-content tweet-container active" data-next-page="{{ tweets.next_page_number }}">
+    {% else %}
+    <div class="tab-pane follow follow-content tweet-container active">
+    {% endif %}
+        {% if tweets %}
+            {% for tweet in tweets %}
+            <div class="search-results-tweet mx-auto">
+                <a class="card-body text-dark d-flex tweet-card-body" href="{% url 'tweet_detail' tweet.id %}">
+                    <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
+                        <img src="{{ tweet.user.profile_image.url }}" />
+                    </a></object>
+                    <div class="ml-3 tweet-content">
+                        <div class="tweet-data d-flex justify-content-between">
+                            <object>
+                                <a href="{% url 'profile' tweet.user.id %}" class="tweet-user-nickname">{{ tweet.user.nickname }}</a>
+                            </object>
+                            <div class="tweet-date">{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+                        </div>
+                        <div class="tweet-text">
+                            {{ tweet.text }}
+                        </div>
+                    </div>
+                </a>
+                {% include "common/tweet_sousa.html" %}
+                <div class="tweet-u-card-body">
+                    {% include "common/like_btn.html" %}
+                    {% include "common/comment_btn.html" %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="none-tweet mx-auto">検索結果なし。</div>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock %}

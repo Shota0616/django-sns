@@ -6,8 +6,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
-    path('account/', include('user.urls')),
-    path('account/', include('allauth.urls')),
+    path('accounts/', include('user.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 # DEBUGがTrueの場合のみ、静的ファイルとメディアファイルを配信する設定を追加

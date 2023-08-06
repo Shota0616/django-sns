@@ -7,20 +7,25 @@
         {% if tweets %}
             {% for tweet in tweets %}
                 <div class="card tweet-card">
-                    <a class="card-body text-dark d-flex tweet-card-body" href="{% url 'tweet_detail' tweet.id %}">
-                        <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
-                            <img src="{{ tweet.user.profile_image.url }}" />
-                        </a></object>
-                        <div class="ml-3 tweet-content">
-                            <div class="tweet-data d-flex justify-content-between">
-                                <object>
-                                    <a href="{% url 'profile' tweet.user.id %}" class="tweet-user-nickname">{{ tweet.user.nickname }}</a>
-                                </object>
-                                <div class="tweet-date">{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+                    <a class="card-body tweet-card-aaaaa" href="{% url 'tweet_detail' tweet.id %}">
+                        <div class="text-dark d-flex tweet-card-body">
+                            <object class="profile-image"><a class="profile-image-a" href="{% url 'profile' tweet.user.id %}">
+                                <img src="{{ tweet.user.profile_image.url }}" />
+                            </a></object>
+                            <div class="ml-3 tweet-content">
+                                <div class="tweet-data d-flex justify-content-between">
+                                    <object class="tweet-profile">
+                                        <a href="{% url 'profile' tweet.user.id %}" class="tweet-user-nickname">
+                                            <span class="follow-nickname">{{ tweet.user.nickname }}</span>
+                                            <span class="follow-userid">@{{ tweet.user.userid }}</span>
+                                        </a>
+                                    </object>
+                                    <div class="tweet-date">{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+                                </div>
                             </div>
-                            <div class="tweet-text">
-                                {{ tweet.text }}
-                            </div>
+                        </div>
+                        <div class="tweet-text-aaaa">
+                            {{ tweet.text }}
                         </div>
                     </a>
                     {% include "common/tweet_sousa.html" %}
