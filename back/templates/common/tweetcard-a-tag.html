@@ -28,7 +28,9 @@
                             {{ tweet.text }}
                         </div>
                     </a>
-                    {% include "common/tweet_sousa.html" %}
+                    {% if tweet.user == request.user %}
+                        {% include "common/tweet_sousa.html" %}
+                    {% endif %}
                     <div class="tweet-u-card-body">
                         {% include "common/like_btn.html" %}
                         {% include "common/comment_btn.html" %}

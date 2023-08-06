@@ -362,6 +362,7 @@ def follow_unfollow_user(request):
 
 # tweetのいいね用関数
 def like_tweet(request):
+    # ユーザーがログインしているときのみ動作、それ以外はログインページに飛ばす
     if request.user.is_authenticated:
         # likeボタンを押したtweetのpkを取得
         tweet_pk = int(request.POST.get('tweet_pk'))
@@ -370,17 +371,16 @@ def like_tweet(request):
             'user': f'{ request.user }',
         }
         tweet = Tweet.objects.get(id=tweet_pk)
-        like = Like.objects.filter(tweet=tweet, user=request.user)
+        like, created = Like.objects.get_or_create(tweet=tweet, user=request.user)
 
-        if like.exists():
+        if created:
+            context['method'] = 'create'
+        else:
             like.delete()
             context['method'] = 'delete'
-        else:
-            like.create(tweet=tweet, user=request.user)
-            context['method'] = 'create'
 
         tweet_likes_dict = get_tweet_likes(tweet)
-        context['tweet_likes'] = tweet_likes_dict[tweet_pk]
+        context['tweet_likes'] = tweet_likes_dict.get(tweet_pk, "")
 
         return JsonResponse(context)
     else:

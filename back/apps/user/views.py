@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
+from collections import defaultdict
 
 from allauth.account import views
 

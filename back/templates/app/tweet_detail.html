@@ -99,7 +99,9 @@
                         </div>
                     </div>
                 </div>
-                {% include "common/comment_sousa.html" %}
+                {% if comment.user == request.user %}
+                    {% include "common/comment_sousa.html" %}
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}
