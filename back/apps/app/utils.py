@@ -42,5 +42,5 @@ def get_tweet_comment(tweets):
     )
     tweet_comments_dict = {like['tweet_id']: like['count'] for like in tweet_comments}
     if len(tweet_comments_dict) == 0:
-        tweet_comments_dict = {tweets.id : ""}
+        tweet_comments_dict = {}
     return tweet_comments_dict
