@@ -151,19 +151,19 @@ a.tweet-edit:hover {
 .profile-top {
     display: flex;
     width: 100%;
+    height: 65px;
     margin-bottom: 15px;
 }
 
 .profile-image-aaa {
-    max-width: 100px;
-    min-width: 50px;
+    height: 100px;
+    width: 100px;
     border-radius: 50%;
     overflow: hidden;
     margin-right: 15px;
 }
 
 .profile-img {
-    max-width: 100px;
     width: 100%;
 }
 
@@ -349,6 +349,7 @@ a.tweet-edit:hover {
     }
 
     .profile-image-aaa {
-        max-width: 65px;
+        width: 65px;
+        height: 65px;
     }
   }
