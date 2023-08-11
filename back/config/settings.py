@@ -26,7 +26,7 @@ SECRET_KEY = env('SECRET_KEY')
 # DEBUGモード,本番環境では、Falseにする
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
