@@ -3,6 +3,7 @@ ENV PYTHONUNBUFFERED 1
 ENV WORKDIR /opt/app
 # apt install
 RUN apt update && apt install -y build-essential vim
+RUN mkdir -p ${WORKDIR}
 WORKDIR ${WORKDIR}
 # ログファイル作成
 RUN mkdir -p /var/log/uwsgi/ && touch uwsgi.log
